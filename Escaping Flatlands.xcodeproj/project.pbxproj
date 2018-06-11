@@ -13,6 +13,8 @@
 		17DC0B7020CE8C09001C8DF1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17DC0B6E20CE8C09001C8DF1 /* Main.storyboard */; };
 		17DC0B7220CE8C0B001C8DF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 17DC0B7120CE8C0B001C8DF1 /* Assets.xcassets */; };
 		17DC0B7520CE8C0B001C8DF1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17DC0B7320CE8C0B001C8DF1 /* LaunchScreen.storyboard */; };
+		17DC0B7D20CE96D6001C8DF1 /* BluetoothSerial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17DC0B7C20CE96D6001C8DF1 /* BluetoothSerial.swift */; };
+		17DC0B7F20CE9B2B001C8DF1 /* ScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17DC0B7E20CE9B2B001C8DF1 /* ScannerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		17DC0B7120CE8C0B001C8DF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		17DC0B7420CE8C0B001C8DF1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		17DC0B7620CE8C0B001C8DF1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		17DC0B7C20CE96D6001C8DF1 /* BluetoothSerial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothSerial.swift; sourceTree = "<group>"; };
+		17DC0B7E20CE9B2B001C8DF1 /* ScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,8 @@
 				17DC0B7120CE8C0B001C8DF1 /* Assets.xcassets */,
 				17DC0B7320CE8C0B001C8DF1 /* LaunchScreen.storyboard */,
 				17DC0B7620CE8C0B001C8DF1 /* Info.plist */,
+				17DC0B7C20CE96D6001C8DF1 /* BluetoothSerial.swift */,
+				17DC0B7E20CE9B2B001C8DF1 /* ScannerViewController.swift */,
 			);
 			path = "Escaping Flatlands";
 			sourceTree = "<group>";
@@ -141,6 +147,8 @@
 			files = (
 				17DC0B6D20CE8C09001C8DF1 /* ViewController.swift in Sources */,
 				17DC0B6920CE8C09001C8DF1 /* AppDelegate.swift in Sources */,
+				17DC0B7D20CE96D6001C8DF1 /* BluetoothSerial.swift in Sources */,
+				17DC0B7F20CE9B2B001C8DF1 /* ScannerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,7 +299,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "io.deap.Escaping-Flatlands";
+				PRODUCT_BUNDLE_IDENTIFIER = io.deap.EscapingFlatlands;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -309,7 +317,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "io.deap.Escaping-Flatlands";
+				PRODUCT_BUNDLE_IDENTIFIER = io.deap.EscapingFlatlands;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
