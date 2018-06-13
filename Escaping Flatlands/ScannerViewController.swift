@@ -9,6 +9,7 @@
 import UIKit
 import CoreBluetooth
 
+
 class ScannerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, BluetoothSerialDelegate {
 
     @IBOutlet weak var tableView: UITableView!
@@ -30,6 +31,7 @@ class ScannerViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        //CBPeripheral()
         // Do any additional setup after loading the view.
     
         // TODO tryAgainButton is only enabled when we've stopped scanning
@@ -92,7 +94,7 @@ class ScannerViewController: UIViewController, UITableViewDataSource, UITableVie
         // return a cell with the peripheral name as text in the label
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
         let label = cell.viewWithTag(1) as! UILabel!
-        label?.text = peripherals[(indexPath as NSIndexPath).row].peripheral.name
+        label?.text = "Name"//peripherals[(indexPath as NSIndexPath).row].peripheral.name
         return cell
     }
     

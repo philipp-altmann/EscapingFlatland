@@ -102,7 +102,7 @@ final class BluetoothSerial: NSObject, CBCentralManagerDelegate, CBPeripheralDel
     }
     
     /// UUID of the service to look for.
-    var serviceUUID = CBUUID(string: "FFE0")
+    var serviceUUID = CBUUID(string: "1000")//CBUUID(string: "FFE0")
     
     /// UUID of the characteristic to look for.
     var characteristicUUID = CBUUID(string: "FFE1")
