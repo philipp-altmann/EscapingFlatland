@@ -30,7 +30,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
     var subway: SCNNode = SCNNode()
     
     //Set Size for Station floor
-    let size:(w:CGFloat, h:CGFloat, l:CGFloat) = (0.3, 0.025, 0.75)
+    let size:(w:CGFloat, h:CGFloat, l:CGFloat) = (0.11, 0.01, 0.568)//(0.3, 0.025, 0.75)
+    let scale:CGFloat = 0.025//0.1
     
     
     override func viewDidLoad() {
@@ -77,7 +78,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         
         let pedestrian = SCNNode(geometry: pedestrianGeometry)
         pedestrian.runAction(SCNAction.rotateBy(x: -.pi / 2, y: 0, z: 0, duration: 0))
-        pedestrian.scale = SCNVector3(0.1,0.1,0.1)
+        pedestrian.scale = SCNVector3(scale,scale,scale)
         pedestrian.position = position
         //pedestrian.isHidden = true
         pedestrians.append(pedestrian)
@@ -91,9 +92,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         let subwayMaterial = SCNMaterial()
         subwayMaterial.diffuse.contents = UIColor.init(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
         subwayGeometry.materials = [subwayMaterial]
-        subway = SCNNode(geometry: subwayGeometry)
+        subway = SCNNode()
+        for i in 0..<3 {
+            let train = SCNNode(geometry: subwayGeometry)
+            train.runAction(SCNAction.rotateBy(x: -.pi / 2, y: .pi/2, z: 0, duration: 0))
+            train.scale = SCNVector3(scale,scale,scale)
+            let z:CGFloat = CGFloat(i) * size.l/3 //train.boundingBox.min.x
+            train.position = SCNVector3(0, 0, -z)
+            subway.addChildNode(train)
+        }
+        /*subway = SCNNode(geometry: subwayGeometry)
         subway.runAction(SCNAction.rotateBy(x: -.pi / 2, y: .pi/2, z: 0, duration: 0))
-        subway.scale = SCNVector3(0.1,0.1,0.1)
+        subway.scale = SCNVector3(0.025,0.025,0.025)//SCNVector3(0.1,0.1,0.1)
+        subway.position = SCNVector3(-size.w - 0.005, 0, 5)
+        let xShift = subway.boundingBox.max.x
+        subway.addChildNode(<#T##child: SCNNode##SCNNode#>)*/
+        
         subway.position = SCNVector3(-size.w - 0.005, 0, 5)
         scene.rootNode.addChildNode(subway)
     }
@@ -185,23 +199,24 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         
         let groupCenterX = -size.w/3
         let groupCenterZ = -size.l/5
-        addPedestrian(at: SCNVector3(groupCenterX+0.02,0,groupCenterZ+0.01))
-        addPedestrian(at: SCNVector3(groupCenterX-0.02,0,groupCenterZ+0.03))
-        addPedestrian(at: SCNVector3(groupCenterX-0.04,0,groupCenterZ-0.04))
-        addPedestrian(at: SCNVector3(groupCenterX+0.03,0,groupCenterZ-0.05))
-        addPedestrian(at: SCNVector3(groupCenterX-0.01,0,groupCenterZ-0.07))
+        let pds:CGFloat = scale/10
+        addPedestrian(at: SCNVector3(groupCenterX+2*pds,0,groupCenterZ+1*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ+3*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-4*pds))
+        addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-5*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-7*pds))
         
         
-        let frontDoorZ = -size.l/3
-        let backDoorZ = -size.l/3*2
-        let doorDistanceX = -size.w + 0.05
+        let frontDoorZ = -size.l/4 * 2
+        let backDoorZ = -size.l/4 * 3
+        let doorDistanceX = -size.w + 5*pds
         
         let wait2 = SCNAction.wait(duration: 2)
         let wait1 = SCNAction.wait(duration: 1)
         let fadeOut = SCNAction.fadeOut(duration: 1)
         let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
         let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
-        let moveInDoor = SCNAction.move(by: SCNVector3(-0.1, 0, 0), duration: 2)
+        let moveInDoor = SCNAction.move(by: SCNVector3(-scale, 0, 0), duration: 2)
         pedestrians[0].runAction(SCNAction.sequence([moveToFrontDoor, wait1, moveInDoor, fadeOut]))
         pedestrians[1].runAction(SCNAction.sequence([wait2, moveToFrontDoor, wait2, moveInDoor, fadeOut]))
         pedestrians[2].runAction(SCNAction.sequence([moveToBackDoor,wait1, moveInDoor, fadeOut]))
