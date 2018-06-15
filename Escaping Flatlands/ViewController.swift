@@ -40,7 +40,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         setupAR()
         
         //Setup BT
-        //setupBluetooth()
+        setupBluetooth()
 
     }
     
@@ -156,6 +156,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
     @IBAction func scene1(_ sender: Any) {
         print("Button Pressed")
         scene1.isEnabled = false
+        serial.sendMessageToDevice("2");
+        
         
         addSubway()
 
