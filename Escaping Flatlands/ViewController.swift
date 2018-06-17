@@ -247,6 +247,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
     @IBAction func bluetoothInteraction(_ sender: Any) {
         if serial.isReady{
             //Disconnect
+            serial.disconnect()
         } else {
             self.performSegue(withIdentifier: "showBluetoothList", sender: self)
         }
@@ -260,13 +261,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
     @objc func reloadView() {
         serial.delegate = self
         if serial.isReady {
-            bluetoothLabel.text = "Connected to \(serial.connectedPeripheral!.name)"
+            bluetoothLabel.text = "Connected to \(serial.connectedPeripheral!.name!)"
             bluetoothButton.setTitle("Disconnect", for: .normal)
             bluetoothButton.tintColor = .red
+            bluetoothButton.setImage(UIImage(named: "disconnect"), for: .normal)
+            bluetoothButton.setImage(UIImage(named: "disconnect-pressed"), for: .highlighted)
+            bluetoothButton.setImage(UIImage(named: "disconnect-pressed"), for: .selected)
+            //button to disconnect
         } else if serial.centralManager.state == .poweredOn {
             bluetoothLabel.text = "Not Connected"
             bluetoothButton.setTitle("Connect", for: .normal)
             bluetoothButton.tintColor = .white
+            bluetoothButton.setImage(UIImage(named: "bluetooth"), for: .normal)
+            bluetoothButton.setImage(UIImage(named: "bluetooth-pressed"), for: .highlighted)
+            bluetoothButton.setImage(UIImage(named: "bluetooth-pressed"), for: .selected)
         } else {
             print("Unhandled Case ")
         }

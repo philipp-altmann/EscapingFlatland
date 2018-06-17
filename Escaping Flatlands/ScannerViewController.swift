@@ -48,6 +48,8 @@ class ScannerViewController: UIViewController, UITableViewDataSource, UITableVie
             return
         }
         
+        self.tableView.rowHeight = 44.0
+        
         // start scanning and schedule the time out
         serial.startScan()
         Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(ScannerViewController.scanTimeOut), userInfo: nil, repeats: false)
@@ -94,7 +96,7 @@ class ScannerViewController: UIViewController, UITableViewDataSource, UITableVie
         // return a cell with the peripheral name as text in the label
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
         let label = cell.viewWithTag(1) as! UILabel!
-        label?.text = "Name"//peripherals[(indexPath as NSIndexPath).row].peripheral.name
+        label?.text = peripherals[(indexPath as NSIndexPath).row].peripheral.name
         return cell
     }
     
