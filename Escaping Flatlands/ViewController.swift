@@ -12,7 +12,7 @@ import ARKit
 import CoreBluetooth
 import GLKit
 
-class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelegate {
+class ViewController: UIViewController {
     
     //AR Outlets
     var scene = SCNScene()
@@ -27,7 +27,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
     
     //Scene Components
     var pedestrians: [SCNNode] = []
-    var subway: SCNNode = SCNNode()
+    var subway: Subway?
     
     //Set Size for Station floor
     let size:(w:CGFloat, h:CGFloat, l:CGFloat) = (0.11, 0.01, 0.568)//(0.3, 0.025, 0.75)
@@ -45,17 +45,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
 
     }
     
-    func setupAR() {
-        sceneView.delegate = self
-        sceneView.autoenablesDefaultLighting = true
-        
-        // Show statistics such as fps and timing information
-        //sceneView.showsStatistics = true
-        //sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints,ARSCNDebugOptions.showWorldOrigin]
-        
-        setupBase()
-        sceneView.scene = scene
-    }
+    
     
     //Helper Function Setting Subway Station Floor
     func setupBase() {
@@ -87,7 +77,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         pedestrian.runAction(SCNAction.fadeIn(duration: 1))
     }
     
-    func addSubway() {
+    /*func addSubway() {
         let subwayGeometry = (SCNScene(named: "art.scnassets/subway.scn")!).rootNode.childNode(withName: "train", recursively: false)!.geometry!
         let subwayMaterial = SCNMaterial()
         subwayMaterial.diffuse.contents = UIColor.init(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
@@ -110,7 +100,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         
         subway.position = SCNVector3(-size.w - 0.005, 0, 5)
         scene.rootNode.addChildNode(subway)
-    }
+    }*/
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -136,16 +126,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         // Release any cached data, images, etc that aren't in use.
     }
 
-    // MARK: - ARSCNViewDelegate
-    
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
-    }
-*/
+
     @IBAction func reloadAR(_ sender: Any) {
         let configuration = ARWorldTrackingConfiguration()
         //configuration.worldAlignment = .gravity
@@ -156,7 +137,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         print("Button Pressed")
         //serial.sendMessageToDevice("4");
         let action = SCNAction.rotateBy(x: 0, y: 0, z: .pi / 2, duration: 2)
-        subway.runAction(action)
+        subway?.runAction(action)
     }
     
     @IBAction func scene2(_ sender: Any) {
@@ -164,7 +145,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         //serial.sendMessageToDevice("3");
         
         let action = SCNAction.rotateBy(x: 0, y: .pi, z: 0, duration: 2)
-        subway.runAction(action)
+        subway?.runAction(action)
     }
     
     @IBAction func scene1(_ sender: Any) {
@@ -172,8 +153,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         scene1.isEnabled = false
         serial.sendMessageToDevice("2");
         
-        
-        addSubway()
+        self.subway = Subway(from: [0,0,0], delegate: self)
 
         //subway.runAction(SCNAction.move(to: SCNVector3(-size.w - 0.005, 0, 5), duration: 0))
         let moveInSubway = SCNAction.moveBy(x: 0, y: 0, z: -5, duration: 5)
@@ -189,7 +169,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         let resetSubway = SCNAction.moveBy(x: 0, y: 0, z: 10, duration: 1)
         let subwayChain = SCNAction.sequence([showSubway, waitSubway, hideSubway])
 
-        subway.runAction(subwayChain) {
+        subway?.runAction(subwayChain) {
             DispatchQueue.main.async {
                 self.scene1.isEnabled = true
             }
@@ -224,20 +204,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         pedestrians[4].runAction(SCNAction.sequence([wait2, wait2, wait2, moveToFrontDoor, moveInDoor, fadeOut]))
     }
     
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
-        
-    }
     
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
-        
-    }
 
     
     //Unused
@@ -253,10 +220,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         }
         
     }
-    
-    
-    
-    
     
     @objc func reloadView() {
         serial.delegate = self
@@ -279,11 +242,49 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
             print("Unhandled Case ")
         }
     }
+}
+
+extension ViewController: ARSCNViewDelegate{
     
-    func serialDidReceiveString(_ message: String) {
-        // add the received text to the textView, optionally with a line break at the end
+    func setupAR() {
+        sceneView.delegate = self
+        sceneView.autoenablesDefaultLighting = true
+        
+        // Show statistics such as fps and timing information
+        //sceneView.showsStatistics = true
+        //sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints,ARSCNDebugOptions.showWorldOrigin]
+        
+        setupBase()
+        sceneView.scene = scene
     }
     
+    func session(_ session: ARSession, didFailWithError error: Error) {
+        // Present an error message to the user
+    }
+    
+    func sessionWasInterrupted(_ session: ARSession) {
+        // Inform the user that the session has been interrupted, for example, by presenting an overlay
+    }
+    
+    func sessionInterruptionEnded(_ session: ARSession) {
+        // Reset tracking and/or remove existing anchors if consistent tracking is required
+    }
+    // Override to create and configure nodes for anchors added to the view's session.
+    /*func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
+     let node = SCNNode()
+     return node
+     }*/
+}
+
+extension ViewController: BluetoothSerialDelegate{
+    
+    func setupBluetooth() {
+        serial = BluetoothSerial(delegate: self)
+        reloadView()
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.reloadView), name: NSNotification.Name(rawValue: "reloadStartViewController"), object: nil)
+    }
+    
+    // Called when de state of the CBCentralManager changes (e.g. when bluetooth is turned on/off)
     func serialDidChangeState() {
         reloadView()
         if serial.centralManager.state != .poweredOn {
@@ -291,6 +292,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         }
     }
     
+    // Called when a peripheral disconnected
     func serialDidDisconnect(_ peripheral: CBPeripheral, error: NSError?) {
         reloadView()
         //TODO blend blur view
@@ -299,11 +301,38 @@ class ViewController: UIViewController, ARSCNViewDelegate, BluetoothSerialDelega
         bluetoothButton.tintColor = .white
     }
     
-    func setupBluetooth() {
-        serial = BluetoothSerial(delegate: self)
-        reloadView()
-        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.reloadView), name: NSNotification.Name(rawValue: "reloadStartViewController"), object: nil)
+    // Called when a message is received
+    func serialDidReceiveString(_ message: String) {
+        // add the received text to the textView, optionally with a line break at the end
     }
-    
-    
+    /*
+     //Not implemented:
+     
+     /// Called when a message is received
+     func serialDidReceiveBytes(_ bytes: [UInt8])
+     
+     /// Called when a message is received
+     func serialDidReceiveData(_ data: Data)
+     
+     /// Called when the RSSI of the connected peripheral is read
+     func serialDidReadRSSI(_ rssi: NSNumber)
+     
+     /// Called when a new peripheral is discovered while scanning. Also gives the RSSI (signal strength)
+     func serialDidDiscoverPeripheral(_ peripheral: CBPeripheral, RSSI: NSNumber?)
+     
+     /// Called when a peripheral is connected (but not yet ready for cummunication)
+     func serialDidConnect(_ peripheral: CBPeripheral)
+     
+     /// Called when a pending connection failed
+     func serialDidFailToConnect(_ peripheral: CBPeripheral, error: NSError?)
+     
+     /// Called when a peripheral is ready for communication
+     func serialIsReady(_ peripheral: CBPeripheral)
+     */
+}
+
+extension ViewController: SubwayDelegate{
+    func didChange(state: [Int]) {
+        print("STate Changed")
+    }
 }

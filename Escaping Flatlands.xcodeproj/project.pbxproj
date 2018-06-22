@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		179C11D720DC4B7900EF9726 /* Pedestrian.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179C11D620DC4B7900EF9726 /* Pedestrian.swift */; };
+		179C11D920DC4CD300EF9726 /* Subway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179C11D820DC4CD300EF9726 /* Subway.swift */; };
+		179C11DB20DC501100EF9726 /* Wagon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179C11DA20DC501100EF9726 /* Wagon.swift */; };
+		179C11DD20DC511A00EF9726 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179C11DC20DC511A00EF9726 /* Constants.swift */; };
+		179C11DF20DC683E00EF9726 /* DistanceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179C11DE20DC683E00EF9726 /* DistanceExtension.swift */; };
 		17DC0B6920CE8C09001C8DF1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17DC0B6820CE8C09001C8DF1 /* AppDelegate.swift */; };
 		17DC0B6B20CE8C09001C8DF1 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 17DC0B6A20CE8C09001C8DF1 /* art.scnassets */; };
 		17DC0B6D20CE8C09001C8DF1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17DC0B6C20CE8C09001C8DF1 /* ViewController.swift */; };
@@ -18,6 +23,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		179C11D620DC4B7900EF9726 /* Pedestrian.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pedestrian.swift; sourceTree = "<group>"; };
+		179C11D820DC4CD300EF9726 /* Subway.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subway.swift; sourceTree = "<group>"; };
+		179C11DA20DC501100EF9726 /* Wagon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wagon.swift; sourceTree = "<group>"; };
+		179C11DC20DC511A00EF9726 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		179C11DE20DC683E00EF9726 /* DistanceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceExtension.swift; sourceTree = "<group>"; };
 		17DC0B6520CE8C09001C8DF1 /* Escaping Flatlands.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Escaping Flatlands.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		17DC0B6820CE8C09001C8DF1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		17DC0B6A20CE8C09001C8DF1 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -69,6 +79,11 @@
 				17DC0B7620CE8C0B001C8DF1 /* Info.plist */,
 				17DC0B7C20CE96D6001C8DF1 /* BluetoothSerial.swift */,
 				17DC0B7E20CE9B2B001C8DF1 /* ScannerViewController.swift */,
+				179C11D620DC4B7900EF9726 /* Pedestrian.swift */,
+				179C11D820DC4CD300EF9726 /* Subway.swift */,
+				179C11DA20DC501100EF9726 /* Wagon.swift */,
+				179C11DC20DC511A00EF9726 /* Constants.swift */,
+				179C11DE20DC683E00EF9726 /* DistanceExtension.swift */,
 			);
 			path = "Escaping Flatlands";
 			sourceTree = "<group>";
@@ -145,10 +160,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				179C11D720DC4B7900EF9726 /* Pedestrian.swift in Sources */,
 				17DC0B6D20CE8C09001C8DF1 /* ViewController.swift in Sources */,
+				179C11DF20DC683E00EF9726 /* DistanceExtension.swift in Sources */,
 				17DC0B6920CE8C09001C8DF1 /* AppDelegate.swift in Sources */,
 				17DC0B7D20CE96D6001C8DF1 /* BluetoothSerial.swift in Sources */,
+				179C11D920DC4CD300EF9726 /* Subway.swift in Sources */,
 				17DC0B7F20CE9B2B001C8DF1 /* ScannerViewController.swift in Sources */,
+				179C11DB20DC501100EF9726 /* Wagon.swift in Sources */,
+				179C11DD20DC511A00EF9726 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
