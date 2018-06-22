@@ -31,12 +31,6 @@ class ScannerViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //CBPeripheral()
-        // Do any additional setup after loading the view.
-    
-        // TODO tryAgainButton is only enabled when we've stopped scanning
-        //tryAgainButton.isEnabled = false
-        
         // remove extra seperator insets (looks better imho)
         tableView.tableFooterView = UIView(frame: CGRect.zero)
         
