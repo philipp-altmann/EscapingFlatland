@@ -22,12 +22,16 @@ class Subway: SCNNode {
         self.delegate = delegate
         super.init()
         
-        for i in State {
+        
+        
+        
+        for i in State  {
             let wagon = Wagon(with: i, at: State.index(of: i)!, delegate: self)
             wagons.append(wagon)
             self.addChildNode(wagon)
         }
         self.position = SCNVector3(-c.size.w - 0.005, 0, 5)
+        
     }
     
     /*func setup(basePosition: SCNVector3) -> <#return type#> {
@@ -40,6 +44,7 @@ class Subway: SCNNode {
     
     func entered(at: Int) {
         self.state[at] += 1
+        print(self.getState())
         delegate.didChange(state: state)
     }
     

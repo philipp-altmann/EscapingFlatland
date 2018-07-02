@@ -21,6 +21,13 @@ class ViewController: UIViewController {
     //Scene Trigger Outlets
     @IBOutlet weak var scene1: UIButton!
     
+    @IBOutlet weak var scene2: UIButton!
+    @IBOutlet weak var scene3: UIButton!
+    
+    @IBOutlet weak var scene4: UIButton!
+    @IBOutlet weak var scene5: UIButton!
+    
+    
     //Bluetooth Outlets
     @IBOutlet weak var bluetoothLabel: UILabel!
     @IBOutlet weak var bluetoothButton: UIButton!
@@ -32,6 +39,18 @@ class ViewController: UIViewController {
     //Set Size for Station floor
     let size:(w:CGFloat, h:CGFloat, l:CGFloat) = (0.11, 0.01, 0.568)//(0.3, 0.025, 0.75)
     let scale:CGFloat = 0.025//0.1
+    
+    //subway actions
+    let showSubway = SCNAction.moveBy(x: 0, y: 0, z: -5, duration: 5)
+    let waitSubway = SCNAction.wait(duration: 15)
+    let moveOutSubway = SCNAction.moveBy(x: 0, y: 0, z: -5, duration: 10)
+    let fadeOutSubway = SCNAction.sequence([SCNAction.wait(duration: 2),SCNAction.fadeOut(duration: 3)])
+    
+    //people actions
+    let wait2 = SCNAction.wait(duration: 2)
+    let wait1 = SCNAction.wait(duration: 1)
+    let fadeOut = SCNAction.fadeOut(duration: 1)
+    
     
     
     override func viewDidLoad() {
@@ -61,21 +80,23 @@ class ViewController: UIViewController {
     func addPedestrian(at position: SCNVector3) {
         let pedestrianScene = SCNScene(named: "art.scnassets/SubwayScene.scn")!
         let pedestrianGeometry = pedestrianScene.rootNode.childNode(withName: "pedestrian", recursively: false)!.geometry!
-        
+
         let pedestrianMaterial = SCNMaterial()
         pedestrianMaterial.diffuse.contents = UIColor.init(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
         pedestrianGeometry.materials = [pedestrianMaterial]
-        
+
         let pedestrian = SCNNode(geometry: pedestrianGeometry)
         pedestrian.runAction(SCNAction.rotateBy(x: -.pi / 2, y: 0, z: 0, duration: 0))
         pedestrian.scale = SCNVector3(scale,scale,scale)
         pedestrian.position = position
-        //pedestrian.isHidden = true
+        
         pedestrians.append(pedestrian)
         pedestrian.runAction(SCNAction.fadeOut(duration: 0))
         scene.rootNode.addChildNode(pedestrian)
         pedestrian.runAction(SCNAction.fadeIn(duration: 1))
     }
+    
+    
     
     /*func addSubway() {
         let subwayGeometry = (SCNScene(named: "art.scnassets/subway.scn")!).rootNode.childNode(withName: "train", recursively: false)!.geometry!
@@ -133,77 +154,891 @@ class ViewController: UIViewController {
         self.sceneView.session.run(configuration, options: [ARSession.RunOptions.removeExistingAnchors, ARSession.RunOptions.resetTracking])
     }
     
-    @IBAction func scene3(_ sender: Any) {
-        print("Button Pressed")
-        //serial.sendMessageToDevice("4");
-        let action = SCNAction.rotateBy(x: 0, y: 0, z: .pi / 2, duration: 2)
-        subway?.runAction(action)
-    }
     
-    @IBAction func scene2(_ sender: Any) {
-        print("Button Pressed")
-        //serial.sendMessageToDevice("3");
-        
-        let action = SCNAction.rotateBy(x: 0, y: .pi, z: 0, duration: 2)
-        subway?.runAction(action)
-    }
+    //erste Szene: alle Mittig
     
     @IBAction func scene1(_ sender: Any) {
-        print("Button Pressed")
-        scene1.isEnabled = false
-        serial.sendMessageToDevice("2");
+        print("Button 1 Pressed")
+        print("444")
+        print(serial.sig)
+        //für testzwecke
+        //serial.sig = "101"
+        //um einfahrt zu signalisieren
+        serial.sendMessageToDevice("444")
         
-        self.subway = Subway(from: [0,0,0], delegate: self)
-
-        //subway.runAction(SCNAction.move(to: SCNVector3(-size.w - 0.005, 0, 5), duration: 0))
+        
+        scene1.isEnabled = false
+        scene2.isEnabled = false
+        scene3.isEnabled = false
+        scene4.isEnabled = false
+        scene5.isEnabled = false
+        
+        
+        self.subway = Subway(from: [0,1,2], delegate: self)
+        scene.rootNode.addChildNode(subway!)
+        
+        //subway?.runAction(SCNAction.move(to: SCNVector3(-size.w - 0.005, 0, 5), duration: 0))
         let moveInSubway = SCNAction.moveBy(x: 0, y: 0, z: -5, duration: 5)
-        let fadeInSubway = SCNAction.sequence([SCNAction.wait(duration: 2), SCNAction.fadeIn(duration: 3)])
+      //  let fadeInSubway = SCNAction.sequence([SCNAction.wait(duration: 2), SCNAction.fadeIn(duration: 3)])
         let showSubway = moveInSubway//SCNAction.group([fadeInSubway, moveInSubway])
         
         let waitSubway = SCNAction.wait(duration: 10)
-        
         let moveOutSubway = SCNAction.moveBy(x: 0, y: 0, z: -5, duration: 5)
         let fadeOutSubway = SCNAction.sequence([SCNAction.wait(duration: 2),SCNAction.fadeOut(duration: 1)])
         let hideSubway = SCNAction.group([moveOutSubway, fadeOutSubway])
         
-        let resetSubway = SCNAction.moveBy(x: 0, y: 0, z: 10, duration: 1)
+       // let resetSubway = SCNAction.moveBy(x: 0, y: 0, z: 10, duration: 1)
         let subwayChain = SCNAction.sequence([showSubway, waitSubway, hideSubway])
-
+        
         subway?.runAction(subwayChain) {
             DispatchQueue.main.async {
                 self.scene1.isEnabled = true
+                self.scene2.isEnabled = true
+                self.scene3.isEnabled = true
+                self.scene4.isEnabled = true
+                self.scene5.isEnabled = true
+                print("333")
+                //Buzzer wird somit zurückgesetzt
+                serial.sendMessageToDevice("333")
             }
             self.pedestrians = []
+            
         }
-        
-        
+    
         let groupCenterX = -size.w/3
         let groupCenterZ = -size.l/5
         let pds:CGFloat = scale/10
-        addPedestrian(at: SCNVector3(groupCenterX+2*pds,0,groupCenterZ+1*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ+3*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-4*pds))
-        addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-5*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-7*pds))
         
+        //vorne
+//        addPedestrian(at: SCNVector3(groupCenterX+2*pds,0,groupCenterZ+1*pds))
+//        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ+3*pds))
+//        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-4*pds))
+//        addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-5*pds))
+//        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-7*pds))
+        //mitte
+        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-20*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-30*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-53*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-63*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-35*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-33*pds))
+        //hinten
         
         let frontDoorZ = -size.l/4 * 2
         let backDoorZ = -size.l/4 * 3
         let doorDistanceX = -size.w + 5*pds
         
+        let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
+        let moveInDoor = SCNAction.move(by: SCNVector3(-scale, 0, 0), duration: 2)
+        var targetDoor1 = moveToFrontDoor
+        var targetDoor2 = moveToFrontDoor
+        
         let wait2 = SCNAction.wait(duration: 2)
         let wait1 = SCNAction.wait(duration: 1)
         let fadeOut = SCNAction.fadeOut(duration: 1)
-        let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
-        let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
-        let moveInDoor = SCNAction.move(by: SCNVector3(-scale, 0, 0), duration: 2)
-        pedestrians[0].runAction(SCNAction.sequence([moveToFrontDoor, wait1, moveInDoor, fadeOut]))
-        pedestrians[1].runAction(SCNAction.sequence([wait2, moveToFrontDoor, wait2, moveInDoor, fadeOut]))
-        pedestrians[2].runAction(SCNAction.sequence([moveToBackDoor,wait1, moveInDoor, fadeOut]))
-        pedestrians[3].runAction(SCNAction.sequence([wait1 ,moveToBackDoor, wait2, moveInDoor, fadeOut]))
-        pedestrians[4].runAction(SCNAction.sequence([wait2, wait2, wait2, moveToFrontDoor, moveInDoor, fadeOut]))
+        
+        
+        chooseDoor()
+        
+        pedestrians[0].runAction(SCNAction.sequence([targetDoor2, wait1, moveInDoor, fadeOut]))
+        pedestrians[1].runAction(SCNAction.sequence([wait2, targetDoor2, wait2, moveInDoor, fadeOut]))
+        pedestrians[2].runAction(SCNAction.sequence([targetDoor2,wait1, moveInDoor, fadeOut]))
+        pedestrians[3].runAction(SCNAction.sequence([wait1 ,targetDoor1, wait2, moveInDoor, fadeOut]))
+        pedestrians[4].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        pedestrians[5].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        
+        
     }
     
+    
+    
+    //zweite Szene: Vorne und Hinten gleich viele
+    
+    @IBAction func scene2(_ sender: Any) {
+        scene1.isEnabled = false
+        scene2.isEnabled = false
+        scene3.isEnabled = false
+        scene4.isEnabled = false
+        scene5.isEnabled = false
+        
+        print("Button 2 Pressed")
+        print(serial.sig)
+        //serial.sig = "202"
+        serial.sendMessageToDevice("444")
+        print("444")
+        
+        self.subway = Subway(from: [0,1,2], delegate: self)
+        scene.rootNode.addChildNode(subway!)
+        
+       
+        let hideSubway = SCNAction.group([moveOutSubway, fadeOutSubway])
+        let subwayChain = SCNAction.sequence([showSubway, waitSubway, hideSubway])
+
+        subway?.runAction(subwayChain) {
+            DispatchQueue.main.async {
+                self.scene1.isEnabled = true
+                self.scene2.isEnabled = true
+                self.scene3.isEnabled = true
+                self.scene4.isEnabled = true
+                self.scene5.isEnabled = true
+                print("333")
+                //Buzzer wird somit zurückgesetzt
+                serial.sendMessageToDevice("333")
+            }
+            self.pedestrians = []
+            
+        }
+        
+        let groupCenterX = -size.w/3
+        let groupCenterZ = -size.l/5
+        let pds:CGFloat = scale/10
+        //hinten
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+20*pds))
+        addPedestrian(at: SCNVector3(groupCenterX+2*pds,0,groupCenterZ+30*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ+40*pds))
+        //vorne
+        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-130*pds))
+        addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-120*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-100*pds))
+        
+
+        
+        let frontDoorZ = -size.l/4 * 3
+        let middleDoorZ = -size.l/4 * 2
+        let backDoorZ = -size.l/4 * 1
+        let doorDistanceX = -size.w + 5*pds
+        
+        
+        let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
+        let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)
+        let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
+        let moveInDoor = SCNAction.move(by: SCNVector3(-scale, 0, 0), duration: 2)
+        
+        
+        
+       // var targetDoor2 = moveToFrontDoor
+        
+        let wait2 = SCNAction.wait(duration: 2)
+        let wait1 = SCNAction.wait(duration: 1)
+        let fadeOut = SCNAction.fadeOut(duration: 1)
+        
+        
+        
+        var firstDigit = Int(serial.sig[serial.sig.startIndex..<serial.sig.index(serial.sig.endIndex, offsetBy: -2)])
+        var secondDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:1)..<serial.sig.index(serial.sig.endIndex, offsetBy: -1)])
+        var thirdDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:2)..<serial.sig.endIndex])
+        //default
+        var targetDoor1 = moveToFrontDoor
+        var targetDoor2 = moveToFrontDoor
+        
+        
+        if firstDigit!<secondDigit!{
+            if firstDigit!<thirdDigit!{
+                //erste Ziffer ist kleinste bzw hinten am leersten
+                targetDoor1 = moveToBackDoor
+                targetDoor2 = moveToBackDoor
+                firstDigit = firstDigit! + 2
+                print("hinten leer")
+            }else if thirdDigit!<firstDigit!{
+                //letzte ist kleinste
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToFrontDoor
+                print("vorne leer")
+                thirdDigit = thirdDigit! + 2
+            }
+            else{
+                //erste und letzte kleiner als mitte
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToBackDoor
+                print("hinten und vorne beide leer")
+                firstDigit = firstDigit! + 1
+                thirdDigit = thirdDigit! + 1
+            }
+            
+        }else if (firstDigit!==secondDigit!)&&(firstDigit!<thirdDigit!){
+            //vordere beide kleiner als letzte
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToBackDoor
+            print("Hinten und Mitte beide leer")
+            firstDigit = firstDigit!+1
+            secondDigit = secondDigit!+1
+        }else if (thirdDigit!==secondDigit!)&&(thirdDigit!<firstDigit!){
+            //Letzte und Mitte kleiner als erste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToMiddleDoor
+            print("Vorne und Mitte beide leer")
+            thirdDigit = thirdDigit!+1
+            secondDigit = secondDigit!+1
+        }
+        else if secondDigit!<thirdDigit!{
+            //mittlere ist kleinste
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToMiddleDoor
+            print("mitte leer")
+            secondDigit = secondDigit!+2
+        }else if thirdDigit!<secondDigit!{
+            //lezte ist kleinste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToFrontDoor
+            print("vorne leer")
+            thirdDigit = thirdDigit! + 2
+        }else{
+            //alle sind gleichgroß
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToBackDoor
+            print("alle gleich")
+            firstDigit = firstDigit! + 1
+            thirdDigit = thirdDigit! + 1
+        }
+        
+        // define and send values
+        var finalFirstDigit = ""
+        var finalSecondDigit = ""
+        var finalThirdDigit = ""
+        if firstDigit!>2{
+            finalFirstDigit = "2"
+        }else {
+            finalFirstDigit = String(firstDigit!)
+        }
+        if secondDigit!>2{
+            finalSecondDigit = "2"
+        }else {
+            finalSecondDigit = String(secondDigit!)
+        }
+        if thirdDigit!>2{
+            finalThirdDigit = "2"
+        }else {
+            finalThirdDigit = String(thirdDigit!)
+        }
+        print(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        
+        
+        
+        pedestrians[0].runAction(SCNAction.sequence([wait1, targetDoor2, wait1, moveInDoor, fadeOut]))
+        pedestrians[1].runAction(SCNAction.sequence([wait2, targetDoor2, wait2, moveInDoor, fadeOut]))
+        pedestrians[2].runAction(SCNAction.sequence([wait1, targetDoor2,wait1, moveInDoor, fadeOut]))
+        pedestrians[3].runAction(SCNAction.sequence([wait1,targetDoor1, wait2, moveInDoor, fadeOut]))
+        pedestrians[4].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        pedestrians[5].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        
+        
+    }
+    
+    
+    //dritte Szene: alle Hinten
+    
+    @IBAction func scene3(_ sender: Any) {
+        scene1.isEnabled = false
+        scene2.isEnabled = false
+        scene3.isEnabled = false
+        scene4.isEnabled = false
+        scene5.isEnabled = false
+        
+        print("Button 3 Pressed")
+        print(serial.sig)
+        //serial.sig = "202"
+        serial.sendMessageToDevice("444")
+        print("444")
+    
+        
+        self.subway = Subway(from: [0,1,2], delegate: self)
+        scene.rootNode.addChildNode(subway!)
+ 
+        let hideSubway = SCNAction.group([moveOutSubway, fadeOutSubway])
+        let subwayChain = SCNAction.sequence([showSubway, waitSubway, hideSubway])
+        
+        subway?.runAction(subwayChain) {
+            DispatchQueue.main.async {
+                self.scene1.isEnabled = true
+                self.scene2.isEnabled = true
+                self.scene3.isEnabled = true
+                self.scene4.isEnabled = true
+                self.scene5.isEnabled = true
+                print("333")
+                //Buzzer wird somit zurückgesetzt
+                serial.sendMessageToDevice("333")
+            }
+            self.pedestrians = []
+        }
+        
+        let groupCenterX = -size.w/3
+        let groupCenterZ = -size.l/5
+        let pds:CGFloat = scale/10
+        
+        //hinten
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+20*pds))
+        
+        //vorne
+        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-130*pds))
+        addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-120*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-110*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-115*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-125*pds))
+        
+        let middleDoorZ = -size.l/4 * 2
+        let frontDoorZ = -size.l/4 * 3
+        let backDoorZ = -size.l/4 * 1
+        let doorDistanceX = -size.w + 5*pds
+        
+        let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
+        let moveInDoor = SCNAction.move(by: SCNVector3(-scale, 0, 0), duration: 2)
+        let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
+        let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)
+        
+        
+        
+        var firstDigit = Int(serial.sig[serial.sig.startIndex..<serial.sig.index(serial.sig.endIndex, offsetBy: -2)])
+        var secondDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:1)..<serial.sig.index(serial.sig.endIndex, offsetBy: -1)])
+        var thirdDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:2)..<serial.sig.endIndex])
+        //default
+        var targetDoor1 = moveToFrontDoor
+        var targetDoor2 = moveToFrontDoor
+        
+        
+        if firstDigit!<secondDigit!{
+            if firstDigit!<thirdDigit!{
+                //erste Ziffer ist kleinste bzw hinten am leersten
+                targetDoor1 = moveToBackDoor
+                targetDoor2 = moveToBackDoor
+                firstDigit = firstDigit! + 2
+                print("hinten leer")
+            }else if thirdDigit!<firstDigit!{
+                //letzte ist kleinste
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToFrontDoor
+                print("vorne leer")
+                thirdDigit = thirdDigit! + 2
+            }
+            else{
+                //erste und letzte kleiner als mitte
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToBackDoor
+                print("hinten und vorne beide leer")
+                firstDigit = firstDigit! + 1
+                thirdDigit = thirdDigit! + 1
+            }
+            
+        }else if (firstDigit!==secondDigit!)&&(firstDigit!<thirdDigit!){
+            //vordere beide kleiner als letzte
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToBackDoor
+            print("Hinten und Mitte beide leer")
+            firstDigit = firstDigit!+1
+            secondDigit = secondDigit!+1
+        }else if (thirdDigit!==secondDigit!)&&(thirdDigit!<firstDigit!){
+            //Letzte und Mitte kleiner als erste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToMiddleDoor
+            print("Vorne und Mitte beide leer")
+            thirdDigit = thirdDigit!+1
+            secondDigit = secondDigit!+1
+        }
+        else if secondDigit!<thirdDigit!{
+            //mittlere ist kleinste
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToMiddleDoor
+            print("mitte leer")
+            secondDigit = secondDigit!+2
+        }else if thirdDigit!<secondDigit!{
+            //lezte ist kleinste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToFrontDoor
+            print("vorne leer")
+            thirdDigit = thirdDigit! + 2
+        }else{
+            //alle sind gleichgroß
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToBackDoor
+            print("alle gleich")
+            firstDigit = firstDigit! + 1
+            thirdDigit = thirdDigit! + 1
+        }
+        
+        // define and send values
+        var finalFirstDigit = ""
+        var finalSecondDigit = ""
+        var finalThirdDigit = ""
+        if firstDigit!>2{
+            finalFirstDigit = "2"
+        }else {
+            finalFirstDigit = String(firstDigit!)
+        }
+        if secondDigit!>2{
+            finalSecondDigit = "2"
+        }else {
+            finalSecondDigit = String(secondDigit!)
+        }
+        if thirdDigit!>2{
+            finalThirdDigit = "2"
+        }else {
+            finalThirdDigit = String(thirdDigit!)
+        }
+        print(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        
+        
+        
+        
+        
+        pedestrians[0].runAction(SCNAction.sequence([targetDoor2, wait1, moveInDoor, fadeOut]))
+        pedestrians[1].runAction(SCNAction.sequence([wait2, targetDoor2, wait2, moveInDoor, fadeOut]))
+        pedestrians[2].runAction(SCNAction.sequence([targetDoor2,wait1, moveInDoor, fadeOut]))
+        pedestrians[3].runAction(SCNAction.sequence([wait1 ,targetDoor2, wait2, moveInDoor, fadeOut]))
+        pedestrians[4].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor2, moveInDoor, fadeOut]))
+        pedestrians[5].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        
+    }
+    
+    
+    
+    @IBAction func scene4(_ sender: Any) {
+        scene1.isEnabled = false
+        scene2.isEnabled = false
+        scene3.isEnabled = false
+        scene4.isEnabled = false
+        scene5.isEnabled = false
+        
+        print("Button 4 Pressed")
+        print(serial.sig)
+        //serial.sig = "202"
+        serial.sendMessageToDevice("444")
+        print("444")
+        
+        
+        self.subway = Subway(from: [0,1,2], delegate: self)
+        scene.rootNode.addChildNode(subway!)
+        
+        let hideSubway = SCNAction.group([moveOutSubway, fadeOutSubway])
+        let subwayChain = SCNAction.sequence([showSubway, waitSubway, hideSubway])
+        
+        subway?.runAction(subwayChain) {
+            DispatchQueue.main.async {
+                self.scene1.isEnabled = true
+                self.scene2.isEnabled = true
+                self.scene3.isEnabled = true
+                self.scene4.isEnabled = true
+                self.scene5.isEnabled = true
+                print("333")
+                //Buzzer wird somit zurückgesetzt
+                serial.sendMessageToDevice("333")
+            }
+            self.pedestrians = []
+        }
+        
+        let groupCenterX = -size.w/3
+        let groupCenterZ = -size.l/5
+        let pds:CGFloat = scale/10
+        
+        //hinten
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+20*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+25*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+15*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+22*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+27*pds))
+        
+        //vorne
+        addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-120*pds))
+        
+        
+        let middleDoorZ = -size.l/4 * 2
+        let frontDoorZ = -size.l/4 * 3
+        let backDoorZ = -size.l/4 * 1
+        let doorDistanceX = -size.w + 5*pds
+        
+        let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
+        let moveInDoor = SCNAction.move(by: SCNVector3(-scale, 0, 0), duration: 2)
+        let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
+        let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)
+        
+        var firstDigit = Int(serial.sig[serial.sig.startIndex..<serial.sig.index(serial.sig.endIndex, offsetBy: -2)])
+        var secondDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:1)..<serial.sig.index(serial.sig.endIndex, offsetBy: -1)])
+        var thirdDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:2)..<serial.sig.endIndex])
+        //default
+        var targetDoor1 = moveToFrontDoor
+        var targetDoor2 = moveToFrontDoor
+        
+        
+        if firstDigit!<secondDigit!{
+            if firstDigit!<thirdDigit!{
+                //erste Ziffer ist kleinste bzw hinten am leersten
+                targetDoor1 = moveToBackDoor
+                targetDoor2 = moveToBackDoor
+                firstDigit = firstDigit! + 2
+                print("hinten leer")
+            }else if thirdDigit!<firstDigit!{
+                //letzte ist kleinste
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToFrontDoor
+                print("vorne leer")
+                thirdDigit = thirdDigit! + 2
+            }
+            else{
+                //erste und letzte kleiner als mitte
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToBackDoor
+                print("hinten und vorne beide leer")
+                firstDigit = firstDigit! + 1
+                thirdDigit = thirdDigit! + 1
+            }
+            
+        }else if (firstDigit!==secondDigit!)&&(firstDigit!<thirdDigit!){
+            //vordere beide kleiner als letzte
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToBackDoor
+            print("Hinten und Mitte beide leer")
+            firstDigit = firstDigit!+1
+            secondDigit = secondDigit!+1
+        }else if (thirdDigit!==secondDigit!)&&(thirdDigit!<firstDigit!){
+            //Letzte und Mitte kleiner als erste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToMiddleDoor
+            print("Vorne und Mitte beide leer")
+            thirdDigit = thirdDigit!+1
+            secondDigit = secondDigit!+1
+        }
+        else if secondDigit!<thirdDigit!{
+            //mittlere ist kleinste
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToMiddleDoor
+            print("mitte leer")
+            secondDigit = secondDigit!+2
+        }else if thirdDigit!<secondDigit!{
+            //lezte ist kleinste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToFrontDoor
+            print("vorne leer")
+            thirdDigit = thirdDigit! + 2
+        }else{
+            //alle sind gleichgroß
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToBackDoor
+            print("alle gleich")
+            firstDigit = firstDigit! + 1
+            thirdDigit = thirdDigit! + 1
+        }
+        
+        // define and send values
+        var finalFirstDigit = ""
+        var finalSecondDigit = ""
+        var finalThirdDigit = ""
+        if firstDigit!>2{
+            finalFirstDigit = "2"
+        }else {
+            finalFirstDigit = String(firstDigit!)
+        }
+        if secondDigit!>2{
+            finalSecondDigit = "2"
+        }else {
+            finalSecondDigit = String(secondDigit!)
+        }
+        if thirdDigit!>2{
+            finalThirdDigit = "2"
+        }else {
+            finalThirdDigit = String(thirdDigit!)
+        }
+        print(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        
+        
+        
+        
+        pedestrians[0].runAction(SCNAction.sequence([targetDoor2, wait1, moveInDoor, fadeOut]))
+        pedestrians[1].runAction(SCNAction.sequence([wait2, targetDoor2, wait2, moveInDoor, fadeOut]))
+        pedestrians[2].runAction(SCNAction.sequence([targetDoor2,wait1, moveInDoor, fadeOut]))
+        pedestrians[3].runAction(SCNAction.sequence([wait1 ,targetDoor2, wait2, moveInDoor, fadeOut]))
+        pedestrians[4].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor2, moveInDoor, fadeOut]))
+        pedestrians[5].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        
+    }
+    
+    
+
+    @IBAction func scene5(_ sender: Any) {
+        scene1.isEnabled = false
+        scene2.isEnabled = false
+        scene3.isEnabled = false
+        scene4.isEnabled = false
+        scene5.isEnabled = false
+        
+        print("Button 5 Pressed")
+        print(serial.sig)
+        //serial.sig = "202"
+        
+        serial.sendMessageToDevice("444")
+        print("444")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+            serial.sendMessageToDevice(serial.sig)
+            print(serial.sig)
+            
+        })
+        
+        self.subway = Subway(from: [0,1,2], delegate: self)
+        scene.rootNode.addChildNode(subway!)
+        
+        let hideSubway = SCNAction.group([moveOutSubway, fadeOutSubway])
+        
+        
+        
+        let subwayChain = SCNAction.sequence([showSubway, waitSubway, hideSubway])
+        
+        
+        
+        let groupCenterX = -size.w/3
+        let groupCenterZ = -size.l/5
+        let pds:CGFloat = scale/10
+        
+        //hinten
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+20*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-35*pds))
+        
+        //mitte
+        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-60*pds))
+        addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-80*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-90*pds))
+        
+        //vorne
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-115*pds))
+        
+        let middleDoorZ = -size.l/4 * 2
+        let frontDoorZ = -size.l/4 * 3
+        let backDoorZ = -size.l/4 * 1
+        let doorDistanceX = -size.w + 5*pds
+        
+        let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
+        let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)
+        let moveInDoor = SCNAction.move(by: SCNVector3(-scale, 0, 0), duration: 2)
+       let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
+        
+        
+        var firstDigit = Int(serial.sig[serial.sig.startIndex..<serial.sig.index(serial.sig.endIndex, offsetBy: -2)])
+        var secondDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:1)..<serial.sig.index(serial.sig.endIndex, offsetBy: -1)])
+        var thirdDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:2)..<serial.sig.endIndex])
+        //default
+        var targetDoor1 = moveToFrontDoor
+        var targetDoor2 = moveToFrontDoor
+        
+        
+        if firstDigit!<secondDigit!{
+            if firstDigit!<thirdDigit!{
+                //erste Ziffer ist kleinste bzw hinten am leersten
+                targetDoor1 = moveToBackDoor
+                targetDoor2 = moveToBackDoor
+                firstDigit = firstDigit! + 2
+                print("hinten leer")
+            }else if thirdDigit!<firstDigit!{
+                //letzte ist kleinste
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToFrontDoor
+                print("vorne leer")
+                thirdDigit = thirdDigit! + 2
+            }
+            else{
+                //erste und letzte kleiner als mitte
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToBackDoor
+                print("hinten und vorne beide leer")
+                firstDigit = firstDigit! + 1
+                thirdDigit = thirdDigit! + 1
+            }
+            
+        }else if (firstDigit!==secondDigit!)&&(firstDigit!<thirdDigit!){
+            //vordere beide kleiner als letzte
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToBackDoor
+            print("Hinten und Mitte beide leer")
+            firstDigit = firstDigit!+1
+            secondDigit = secondDigit!+1
+        }else if (thirdDigit!==secondDigit!)&&(thirdDigit!<firstDigit!){
+            //Letzte und Mitte kleiner als erste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToMiddleDoor
+            print("Vorne und Mitte beide leer")
+            thirdDigit = thirdDigit!+1
+            secondDigit = secondDigit!+1
+        }
+        else if secondDigit!<thirdDigit!{
+            //mittlere ist kleinste
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToMiddleDoor
+            print("mitte leer")
+            secondDigit = secondDigit!+2
+        }else if thirdDigit!<secondDigit!{
+            //lezte ist kleinste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToFrontDoor
+            print("vorne leer")
+            thirdDigit = thirdDigit! + 2
+        }else{
+            //alle sind gleichgroß
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToBackDoor
+            print("alle gleich")
+            firstDigit = firstDigit! + 1
+            thirdDigit = thirdDigit! + 1
+        }
+        
+        // define and send values
+        var finalFirstDigit = ""
+        var finalSecondDigit = ""
+        var finalThirdDigit = ""
+        if firstDigit!>2{
+            finalFirstDigit = "2"
+        }else {
+            finalFirstDigit = String(firstDigit!)
+        }
+        if secondDigit!>2{
+            finalSecondDigit = "2"
+        }else {
+            finalSecondDigit = String(secondDigit!)
+        }
+        if thirdDigit!>2{
+            finalThirdDigit = "2"
+        }else {
+            finalThirdDigit = String(thirdDigit!)
+        }
+        
+        //serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        subway?.runAction(subwayChain) {
+            DispatchQueue.main.async {
+                self.scene1.isEnabled = true
+                self.scene2.isEnabled = true
+                self.scene3.isEnabled = true
+                self.scene4.isEnabled = true
+                self.scene5.isEnabled = true
+               
+                
+                
+    
+                
+            }
+            self.pedestrians = []
+        }
+        
+        //Buzzer wird somit zurückgesetzt
+        DispatchQueue.main.asyncAfter(deadline: .now() + 18, execute: {
+             print("333")
+            serial.sendMessageToDevice("333")
+        })
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 12, execute: {
+            print(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+            serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        })
+        
+
+        pedestrians[0].runAction(SCNAction.sequence([targetDoor2, wait1, moveInDoor, fadeOut]))
+        pedestrians[1].runAction(SCNAction.sequence([wait2, targetDoor2, wait2, moveInDoor, fadeOut]))
+        pedestrians[2].runAction(SCNAction.sequence([targetDoor2,wait1, moveInDoor, fadeOut]))
+        pedestrians[3].runAction(SCNAction.sequence([wait1 ,targetDoor1, wait2, moveInDoor, fadeOut]))
+        pedestrians[4].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        pedestrians[5].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        
+    }
+    
+    // choosing the doors from the nuber of people inside
+    func chooseDoor(){
+        
+        let pds:CGFloat = scale/10
+        let frontDoorZ = -size.l/4 * 3
+        let middleDoorZ = -size.l/4 * 2
+        let backDoorZ = -size.l/4 * 1
+        let doorDistanceX = -size.w + 5*pds
+        
+        let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
+        let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)
+        let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
+        
+        var firstDigit = Int(serial.sig[serial.sig.startIndex..<serial.sig.index(serial.sig.endIndex, offsetBy: -2)])
+        var secondDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:1)..<serial.sig.index(serial.sig.endIndex, offsetBy: -1)])
+        var thirdDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:2)..<serial.sig.endIndex])
+        //default
+        var targetDoor1 = moveToFrontDoor
+        var targetDoor2 = moveToFrontDoor
+        
+        
+        if firstDigit!<secondDigit!{
+            if firstDigit!<thirdDigit!{
+                //erste Ziffer ist kleinste bzw hinten am leersten
+                targetDoor1 = moveToBackDoor
+                targetDoor2 = moveToBackDoor
+                firstDigit = firstDigit! + 2
+                print("hinten leer")
+            }else if thirdDigit!<firstDigit!{
+                //letzte ist kleinste
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToFrontDoor
+                print("vorne leer")
+                thirdDigit = thirdDigit! + 2
+            }
+            else{
+                //erste und letzte kleiner als mitte
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToBackDoor
+                print("hinten und vorne beide leer")
+                firstDigit = firstDigit! + 1
+                thirdDigit = thirdDigit! + 1
+            }
+            
+        }else if (firstDigit!==secondDigit!)&&(firstDigit!<thirdDigit!){
+            //vordere beide kleiner als letzte
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToBackDoor
+            print("Hinten und Mitte beide leer")
+            firstDigit = firstDigit!+1
+            secondDigit = secondDigit!+1
+        }else if (thirdDigit!==secondDigit!)&&(thirdDigit!<firstDigit!){
+            //Letzte und Mitte kleiner als erste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToMiddleDoor
+            print("Vorne und Mitte beide leer")
+            thirdDigit = thirdDigit!+1
+            secondDigit = secondDigit!+1
+        }
+        else if secondDigit!<thirdDigit!{
+            //mittlere ist kleinste
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToMiddleDoor
+            print("mitte leer")
+            secondDigit = secondDigit!+2
+        }else if thirdDigit!<secondDigit!{
+            //lezte ist kleinste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToFrontDoor
+            print("vorne leer")
+            thirdDigit = thirdDigit! + 2
+        }else{
+            //alle sind gleichgroß
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToBackDoor
+            print("alle gleich")
+            firstDigit = firstDigit! + 1
+            thirdDigit = thirdDigit! + 1
+        }
+        
+        // define and send values
+        var finalFirstDigit = ""
+        var finalSecondDigit = ""
+        var finalThirdDigit = ""
+        if firstDigit!>2{
+            finalFirstDigit = "2"
+        }else {
+            finalFirstDigit = String(firstDigit!)
+        }
+        if secondDigit!>2{
+            finalSecondDigit = "2"
+        }else {
+            finalSecondDigit = String(secondDigit!)
+        }
+        if thirdDigit!>2{
+            finalThirdDigit = "2"
+        }else {
+            finalThirdDigit = String(thirdDigit!)
+        }
+        print(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        
+    }
     
 
     
@@ -218,7 +1053,6 @@ class ViewController: UIViewController {
         } else {
             self.performSegue(withIdentifier: "showBluetoothList", sender: self)
         }
-        
     }
     
     @objc func reloadView() {

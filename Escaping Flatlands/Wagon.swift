@@ -24,7 +24,8 @@ class Wagon: SCNNode {
         super.init()
         let subwayGeometry = (SCNScene(named: "art.scnassets/subway.scn")!).rootNode.childNode(withName: "train", recursively: false)!.geometry!
         let subwayMaterial = SCNMaterial()
-        subwayMaterial.diffuse.contents = UIColor.init(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
+        //subwayMaterial.diffuse.contents = UIColor.init(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
+        subwayMaterial.diffuse.contents = UIColor.lightGray
         subwayGeometry.materials = [subwayMaterial]
         self.geometry = subwayGeometry
         self.runAction(SCNAction.rotateBy(x: -.pi / 2, y: .pi/2, z: 0, duration: 0))

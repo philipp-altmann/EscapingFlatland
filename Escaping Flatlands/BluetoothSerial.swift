@@ -112,7 +112,7 @@ final class BluetoothSerial: NSObject, CBCentralManagerDelegate, CBPeripheralDel
     /// while fake modules (e.g. from Bolutek) require 'Write with Response'.
     private var writeType: CBCharacteristicWriteType = .withoutResponse
     
-    
+    var sig = ""
     // MARK: functions
     
     /// Always use this to initialize an instance
@@ -280,6 +280,8 @@ final class BluetoothSerial: NSObject, CBCentralManagerDelegate, CBPeripheralDel
         // then the string
         if let str = String(data: data!, encoding: String.Encoding.utf8) {
             delegate.serialDidReceiveString(str)
+            print(str)
+            sig = str
         } else {
             //print("Received an invalid string!") uncomment for debugging
         }

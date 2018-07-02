@@ -14,11 +14,27 @@ class Pedestrian: SCNNode {
     let c = Constants()
     let fadeOut = SCNAction.fadeOut(duration: 1)
     let enter = SCNAction.move(by: SCNVector3(-Constants().scale, 0, 0), duration: 2)
+   // let scale:CGFloat = 0.025//0.1
     
     
     init(at: SCNVector3) {
         //
         super.init()
+        let pedestrianScene = SCNScene(named: "art.scnassets/SubwayScene.scn")!
+        let pedestrianGeometry = pedestrianScene.rootNode.childNode(withName: "pedestrian", recursively: false)!.geometry!
+        
+        let pedestrianMaterial = SCNMaterial()
+        pedestrianMaterial.diffuse.contents = UIColor.init(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
+        pedestrianGeometry.materials = [pedestrianMaterial]
+        
+        let pedestrian = SCNNode(geometry: pedestrianGeometry)
+        pedestrian.runAction(SCNAction.rotateBy(x: -.pi / 2, y: 0, z: 0, duration: 0))
+        pedestrian.scale = SCNVector3(0.025,0.025,0.025)
+        pedestrian.position = position
+        //pedestrian.isHidden = true
+       
+        
+        
     }
     
     func moveTo(_ subway:Subway, within: TimeInterval, after: TimeInterval, delay: TimeInterval) {
