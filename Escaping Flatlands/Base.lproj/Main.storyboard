@@ -62,10 +62,10 @@
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uUe-pm-dIA">
-                                        <rect key="frame" x="0.0" y="593" width="375" height="32"/>
+                                        <rect key="frame" x="58" y="625" width="258" height="48"/>
                                         <color key="backgroundColor" red="0.29385929399999999" green="0.29385929399999999" blue="0.29385929399999999" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="32" id="8lY-GT-wfd"/>
+                                            <constraint firstAttribute="height" constant="48" id="8lY-GT-wfd"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -74,13 +74,13 @@
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="BOT-Vp-LUU" secondAttribute="bottom" constant="16" id="6M2-Ug-vpK"/>
-                                    <constraint firstItem="uUe-pm-dIA" firstAttribute="leading" secondItem="Oac-nI-LEd" secondAttribute="leading" id="Img-No-xS3"/>
+                                    <constraint firstItem="uUe-pm-dIA" firstAttribute="leading" secondItem="Oac-nI-LEd" secondAttribute="leading" constant="58" id="Img-No-xS3"/>
                                     <constraint firstItem="BOT-Vp-LUU" firstAttribute="leading" secondItem="Oac-nI-LEd" secondAttribute="leading" constant="8" id="JWV-CB-Kf0"/>
                                     <constraint firstItem="gn0-gn-Teq" firstAttribute="leading" secondItem="Oac-nI-LEd" secondAttribute="leading" id="LyZ-mL-pKs"/>
                                     <constraint firstAttribute="bottom" secondItem="gn0-gn-Teq" secondAttribute="bottom" id="Pd0-Sh-fd5"/>
                                     <constraint firstAttribute="bottom" secondItem="MFl-hn-3BC" secondAttribute="bottom" constant="16" id="V8J-Mj-1aa"/>
-                                    <constraint firstAttribute="trailing" secondItem="uUe-pm-dIA" secondAttribute="trailing" id="bnj-1X-M5G"/>
-                                    <constraint firstItem="gn0-gn-Teq" firstAttribute="top" secondItem="uUe-pm-dIA" secondAttribute="bottom" id="lbC-xb-uA8"/>
+                                    <constraint firstAttribute="trailing" secondItem="uUe-pm-dIA" secondAttribute="trailing" constant="59" id="bnj-1X-M5G"/>
+                                    <constraint firstItem="gn0-gn-Teq" firstAttribute="top" secondItem="uUe-pm-dIA" secondAttribute="bottom" constant="-48" id="lbC-xb-uA8"/>
                                     <constraint firstAttribute="trailing" secondItem="MFl-hn-3BC" secondAttribute="trailing" constant="8" id="t2q-qj-5p8"/>
                                     <constraint firstAttribute="trailing" secondItem="gn0-gn-Teq" secondAttribute="trailing" id="tFA-ar-XAS"/>
                                 </constraints>

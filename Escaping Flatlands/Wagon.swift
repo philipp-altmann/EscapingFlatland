@@ -22,13 +22,8 @@ class Wagon: SCNNode {
         self.delegate = delegate
         self.wagonNo = i
         super.init()
-       let subwayGeometry = (SCNScene(named: "art.scnassets/model2_1wagons_centered.scn")!).rootNode.childNode(withName: "train", recursively: false)!.geometry!
-      //  let subwayGeometry = (SCNScene(named: "art.scnassets/subway.scn")!).rootNode.childNode(withName: "train", recursively: false)!.geometry!
-        let subwayMaterial = SCNMaterial()
-        //subwayMaterial.diffuse.contents = UIColor.init(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
-        subwayMaterial.diffuse.contents = UIColor.lightGray
-        subwayGeometry.materials = [subwayMaterial]
-        self.geometry = subwayGeometry
+        guard let trainScene = SCNScene(named: "art.scnassets/model2_1wagons_centered.scn") else {print("Unable to unwrapp scene"); return}
+        for node in trainScene.rootNode.childNodes { self.addChildNode(node) }
         self.runAction(SCNAction.rotateBy(x: -.pi / 2, y: .pi/2, z: 0, duration: 0))
         self.scale = SCNVector3(c.scale,c.scale,c.scale)
         self.position = SCNVector3(0, 0, -(CGFloat(i) * c.size.l/3))
