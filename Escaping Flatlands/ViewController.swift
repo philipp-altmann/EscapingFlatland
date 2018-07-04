@@ -27,10 +27,27 @@ class ViewController: UIViewController {
     @IBOutlet weak var scene4: UIButton!
     @IBOutlet weak var scene5: UIButton!
     
+   
     
     //Bluetooth Outlets
     @IBOutlet weak var bluetoothLabel: UILabel!
     @IBOutlet weak var bluetoothButton: UIButton!
+    
+    
+    
+    
+//    @IBAction func PopUp(_ sender: Any) {
+//        let alert = UIAlertController(title: "My Title", message: "This is my message.", preferredStyle: UIAlertControllerStyle.alert)
+//
+//        // add an action (button)
+//        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+//
+//        // show the alert
+//        self.present(alert, animated: true, completion: nil)
+//
+//    }
+    
+    
     
     //Scene Components
     var pedestrians: [SCNNode] = []
@@ -61,7 +78,15 @@ class ViewController: UIViewController {
         
         //Setup BT
         setupBluetooth()
-
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+            
+            let alert = UIAlertController(title: "Please connect to the bluetooth device", message: "", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            
+        })
+        
     }
     
     
@@ -124,6 +149,7 @@ class ViewController: UIViewController {
     }*/
     
     
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -133,7 +159,12 @@ class ViewController: UIViewController {
 
         // Run the view's session
         sceneView.session.run(configuration)
+        
+    
+        
     }
+    
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -157,22 +188,23 @@ class ViewController: UIViewController {
     
     //erste Szene: alle Mittig
     
-    @IBAction func scene1(_ sender: Any) {
+    func scene1Action() {
         print("Button 1 Pressed")
         print("444")
         print(serial.sig)
         //für testzwecke
         //serial.sig = "101"
         //um einfahrt zu signalisieren
+        
+        
+        // send 444 to signal move in train and then old occupation of subway that was received
         serial.sendMessageToDevice("444")
-        
-        
-        scene1.isEnabled = false
-        scene2.isEnabled = false
-        scene3.isEnabled = false
-        scene4.isEnabled = false
-        scene5.isEnabled = false
-        
+        print("444")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+            serial.sendMessageToDevice(serial.sig)
+            print(serial.sig)
+        })
+    
         
         self.subway = Subway(from: [0,1,2], delegate: self)
         scene.rootNode.addChildNode(subway!)
@@ -192,11 +224,11 @@ class ViewController: UIViewController {
         
         subway?.runAction(subwayChain) {
             DispatchQueue.main.async {
-                self.scene1.isEnabled = true
-                self.scene2.isEnabled = true
-                self.scene3.isEnabled = true
-                self.scene4.isEnabled = true
-                self.scene5.isEnabled = true
+                let alert = UIAlertController(title: "Please place some figures in the subway.", message: "Press the blue buzzer when you are done.", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                
+                
                 print("333")
                 //Buzzer wird somit zurückgesetzt
                 serial.sendMessageToDevice("333")
@@ -223,22 +255,131 @@ class ViewController: UIViewController {
         addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-35*pds))
         addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-33*pds))
         //hinten
-        
-        let frontDoorZ = -size.l/4 * 2
-        let backDoorZ = -size.l/4 * 3
-        let doorDistanceX = -size.w + 5*pds
-        
-        let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
-        let moveInDoor = SCNAction.move(by: SCNVector3(-scale, 0, 0), duration: 2)
-        var targetDoor1 = moveToFrontDoor
-        var targetDoor2 = moveToFrontDoor
+    
+    
         
         let wait2 = SCNAction.wait(duration: 2)
         let wait1 = SCNAction.wait(duration: 1)
         let fadeOut = SCNAction.fadeOut(duration: 1)
         
+    
+        let frontDoorZ = -size.l/4 * 3
+        let middleDoorZ = -size.l/4 * 2
+        let backDoorZ = -size.l/4 * 1
+        let doorDistanceX = -size.w + 5*pds
         
-        chooseDoor()
+        
+        let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
+        let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)
+        let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
+        let moveInDoor = SCNAction.move(by: SCNVector3(-scale, 0, 0), duration: 2)
+        
+        
+        
+        // var targetDoor2 = moveToFrontDoor
+        
+        
+        
+        
+        var firstDigit = Int(serial.sig[serial.sig.startIndex..<serial.sig.index(serial.sig.endIndex, offsetBy: -2)])
+        var secondDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:1)..<serial.sig.index(serial.sig.endIndex, offsetBy: -1)])
+        var thirdDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:2)..<serial.sig.endIndex])
+        //default
+        var targetDoor1 = moveToFrontDoor
+        var targetDoor2 = moveToFrontDoor
+        
+        
+        if firstDigit!<secondDigit!{
+            if firstDigit!<thirdDigit!{
+                //erste Ziffer ist kleinste bzw hinten am leersten
+                targetDoor1 = moveToBackDoor
+                targetDoor2 = moveToBackDoor
+                firstDigit = firstDigit! + 2
+                print("hinten leer")
+            }else if thirdDigit!<firstDigit!{
+                //letzte ist kleinste
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToFrontDoor
+                print("vorne leer")
+                thirdDigit = thirdDigit! + 2
+            }
+            else{
+                //erste und letzte kleiner als mitte
+                targetDoor1 = moveToFrontDoor
+                targetDoor2 = moveToBackDoor
+                print("hinten und vorne beide leer")
+                firstDigit = firstDigit! + 1
+                thirdDigit = thirdDigit! + 1
+            }
+            
+        }else if (firstDigit!==secondDigit!)&&(firstDigit!<thirdDigit!){
+            //vordere beide kleiner als letzte
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToBackDoor
+            print("Hinten und Mitte beide leer")
+            firstDigit = firstDigit!+1
+            secondDigit = secondDigit!+1
+        }else if (thirdDigit!==secondDigit!)&&(thirdDigit!<firstDigit!){
+            //Letzte und Mitte kleiner als erste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToMiddleDoor
+            print("Vorne und Mitte beide leer")
+            thirdDigit = thirdDigit!+1
+            secondDigit = secondDigit!+1
+        }
+        else if secondDigit!<thirdDigit!{
+            //mittlere ist kleinste
+            targetDoor1 = moveToMiddleDoor
+            targetDoor2 = moveToMiddleDoor
+            print("mitte leer")
+            secondDigit = secondDigit!+2
+        }else if thirdDigit!<secondDigit!{
+            //lezte ist kleinste
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToFrontDoor
+            print("vorne leer")
+            thirdDigit = thirdDigit! + 2
+        }else{
+            //alle sind gleichgroß
+            targetDoor1 = moveToFrontDoor
+            targetDoor2 = moveToBackDoor
+            print("alle gleich")
+            firstDigit = firstDigit! + 1
+            thirdDigit = thirdDigit! + 1
+        }
+        
+        // define and send values
+        var finalFirstDigit = ""
+        var finalSecondDigit = ""
+        var finalThirdDigit = ""
+        if firstDigit!>2{
+            finalFirstDigit = "2"
+        }else {
+            finalFirstDigit = String(firstDigit!)
+        }
+        if secondDigit!>2{
+            finalSecondDigit = "2"
+        }else {
+            finalSecondDigit = String(secondDigit!)
+        }
+        if thirdDigit!>2{
+            finalThirdDigit = "2"
+        }else {
+            finalThirdDigit = String(thirdDigit!)
+        }
+        
+        //Buzzer wird somit zurückgesetzt
+        DispatchQueue.main.asyncAfter(deadline: .now() + 18, execute: {
+            print("333")
+            serial.sendMessageToDevice("333")
+        })
+        
+        //Neue Belegung der wagons
+        DispatchQueue.main.asyncAfter(deadline: .now() + 12, execute: {
+            print(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+            serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        })
+        
         
         pedestrians[0].runAction(SCNAction.sequence([targetDoor2, wait1, moveInDoor, fadeOut]))
         pedestrians[1].runAction(SCNAction.sequence([wait2, targetDoor2, wait2, moveInDoor, fadeOut]))
@@ -254,18 +395,21 @@ class ViewController: UIViewController {
     
     //zweite Szene: Vorne und Hinten gleich viele
     
-    @IBAction func scene2(_ sender: Any) {
-        scene1.isEnabled = false
-        scene2.isEnabled = false
-        scene3.isEnabled = false
-        scene4.isEnabled = false
-        scene5.isEnabled = false
+    func scene2Action() {
+        
         
         print("Button 2 Pressed")
         print(serial.sig)
         //serial.sig = "202"
+        
+        // send 444 to signal move in train and then old occupation of subway that was received
         serial.sendMessageToDevice("444")
         print("444")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+            serial.sendMessageToDevice(serial.sig)
+            print(serial.sig)
+        })
+        
         
         self.subway = Subway(from: [0,1,2], delegate: self)
         scene.rootNode.addChildNode(subway!)
@@ -276,11 +420,10 @@ class ViewController: UIViewController {
 
         subway?.runAction(subwayChain) {
             DispatchQueue.main.async {
-                self.scene1.isEnabled = true
-                self.scene2.isEnabled = true
-                self.scene3.isEnabled = true
-                self.scene4.isEnabled = true
-                self.scene5.isEnabled = true
+                let alert = UIAlertController(title: "Please place some figures in the subway.", message: "Press the blue buzzer when you are done.", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                
                 print("333")
                 //Buzzer wird somit zurückgesetzt
                 serial.sendMessageToDevice("333")
@@ -410,8 +553,19 @@ class ViewController: UIViewController {
         }else {
             finalThirdDigit = String(thirdDigit!)
         }
-        print(finalFirstDigit + finalSecondDigit + finalThirdDigit)
-        serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        
+        
+        //Buzzer wird somit zurückgesetzt
+        DispatchQueue.main.asyncAfter(deadline: .now() + 18, execute: {
+            print("333")
+            serial.sendMessageToDevice("333")
+        })
+        
+        //Neue Belegung der wagons
+        DispatchQueue.main.asyncAfter(deadline: .now() + 12, execute: {
+            print(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+            serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        })
         
         
         
@@ -428,18 +582,21 @@ class ViewController: UIViewController {
     
     //dritte Szene: alle Hinten
     
-    @IBAction func scene3(_ sender: Any) {
-        scene1.isEnabled = false
-        scene2.isEnabled = false
-        scene3.isEnabled = false
-        scene4.isEnabled = false
-        scene5.isEnabled = false
+    func scene3Action() {
+        
         
         print("Button 3 Pressed")
         print(serial.sig)
         //serial.sig = "202"
+        
+        // send 444 to signal move in train and then old occupation of subway that was received
         serial.sendMessageToDevice("444")
         print("444")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+            serial.sendMessageToDevice(serial.sig)
+            print(serial.sig)
+        })
+        
     
         
         self.subway = Subway(from: [0,1,2], delegate: self)
@@ -450,11 +607,12 @@ class ViewController: UIViewController {
         
         subway?.runAction(subwayChain) {
             DispatchQueue.main.async {
-                self.scene1.isEnabled = true
-                self.scene2.isEnabled = true
-                self.scene3.isEnabled = true
-                self.scene4.isEnabled = true
-                self.scene5.isEnabled = true
+                
+                
+                let alert = UIAlertController(title: "Please place some figures in the subway.", message: "Press the blue buzzer when you are done.", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                
                 print("333")
                 //Buzzer wird somit zurückgesetzt
                 serial.sendMessageToDevice("333")
@@ -468,6 +626,12 @@ class ViewController: UIViewController {
         
         //hinten
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+20*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+30*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+40*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+15*pds))
+        
+        //mitte
+        
         
         //vorne
         addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-130*pds))
@@ -475,6 +639,8 @@ class ViewController: UIViewController {
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-110*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-115*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-125*pds))
+        
+        
         
         let middleDoorZ = -size.l/4 * 2
         let frontDoorZ = -size.l/4 * 3
@@ -578,6 +744,18 @@ class ViewController: UIViewController {
         serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
         
         
+        //Buzzer wird somit zurückgesetzt
+        DispatchQueue.main.asyncAfter(deadline: .now() + 18, execute: {
+            print("333")
+            serial.sendMessageToDevice("333")
+        })
+        
+        //Neue Belegung der wagons
+        DispatchQueue.main.asyncAfter(deadline: .now() + 12, execute: {
+            print(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+            serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        })
+        
         
         
         
@@ -592,18 +770,21 @@ class ViewController: UIViewController {
     
     
     
-    @IBAction func scene4(_ sender: Any) {
-        scene1.isEnabled = false
-        scene2.isEnabled = false
-        scene3.isEnabled = false
-        scene4.isEnabled = false
-        scene5.isEnabled = false
+    func scene4Action() {
+        
         
         print("Button 4 Pressed")
         print(serial.sig)
         //serial.sig = "202"
+    
+        // send 444 to signal move in train and then old occupation of subway that was received
         serial.sendMessageToDevice("444")
         print("444")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+            serial.sendMessageToDevice(serial.sig)
+            print(serial.sig)
+        })
+        
         
         
         self.subway = Subway(from: [0,1,2], delegate: self)
@@ -614,11 +795,12 @@ class ViewController: UIViewController {
         
         subway?.runAction(subwayChain) {
             DispatchQueue.main.async {
-                self.scene1.isEnabled = true
-                self.scene2.isEnabled = true
-                self.scene3.isEnabled = true
-                self.scene4.isEnabled = true
-                self.scene5.isEnabled = true
+               
+                
+                let alert = UIAlertController(title: "Please place some figures in the subway.", message: "Press the blue buzzer when you are done.", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                
                 print("333")
                 //Buzzer wird somit zurückgesetzt
                 serial.sendMessageToDevice("333")
@@ -741,6 +923,18 @@ class ViewController: UIViewController {
         serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
         
         
+        //Buzzer wird somit zurückgesetzt
+        DispatchQueue.main.asyncAfter(deadline: .now() + 18, execute: {
+            print("333")
+            serial.sendMessageToDevice("333")
+        })
+        
+        //Neue Belegung der wagons
+        DispatchQueue.main.asyncAfter(deadline: .now() + 12, execute: {
+            print(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+            serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
+        })
+        
         
         
         pedestrians[0].runAction(SCNAction.sequence([targetDoor2, wait1, moveInDoor, fadeOut]))
@@ -753,13 +947,8 @@ class ViewController: UIViewController {
     }
     
     
-
-    @IBAction func scene5(_ sender: Any) {
-        scene1.isEnabled = false
-        scene2.isEnabled = false
-        scene3.isEnabled = false
-        scene4.isEnabled = false
-        scene5.isEnabled = false
+//not needed
+    func scene5Action() {
         
         print("Button 5 Pressed")
         print(serial.sig)
@@ -777,13 +966,8 @@ class ViewController: UIViewController {
         scene.rootNode.addChildNode(subway!)
         
         let hideSubway = SCNAction.group([moveOutSubway, fadeOutSubway])
-        
-        
-        
         let subwayChain = SCNAction.sequence([showSubway, waitSubway, hideSubway])
-        
-        
-        
+    
         let groupCenterX = -size.w/3
         let groupCenterZ = -size.l/5
         let pds:CGFloat = scale/10
@@ -901,15 +1085,9 @@ class ViewController: UIViewController {
         //serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
         subway?.runAction(subwayChain) {
             DispatchQueue.main.async {
-                self.scene1.isEnabled = true
-                self.scene2.isEnabled = true
-                self.scene3.isEnabled = true
-                self.scene4.isEnabled = true
-                self.scene5.isEnabled = true
-               
-                
-                
-    
+                let alert = UIAlertController(title: "Please place some figures in the subway.", message: "Press the blue buzzer when you are done.", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
                 
             }
             self.pedestrians = []
@@ -1064,6 +1242,15 @@ class ViewController: UIViewController {
             bluetoothButton.setImage(UIImage(named: "disconnect"), for: .normal)
             bluetoothButton.setImage(UIImage(named: "disconnect-pressed"), for: .highlighted)
             bluetoothButton.setImage(UIImage(named: "disconnect-pressed"), for: .selected)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                
+                let alert = UIAlertController(title: "Please place some figures in the subway.", message: "Press the blue buzzer when you are done.", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                
+            })
+            
             //button to disconnect
         } else if serial.centralManager.state == .poweredOn {
             bluetoothLabel.text = "Not Connected"
@@ -1072,6 +1259,14 @@ class ViewController: UIViewController {
             bluetoothButton.setImage(UIImage(named: "bluetooth"), for: .normal)
             bluetoothButton.setImage(UIImage(named: "bluetooth-pressed"), for: .highlighted)
             bluetoothButton.setImage(UIImage(named: "bluetooth-pressed"), for: .selected)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                
+                let alert = UIAlertController(title: "Please connect to the bluetooth device", message: "", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                
+            })
         } else {
             print("Unhandled Case ")
         }
@@ -1090,6 +1285,8 @@ extension ViewController: ARSCNViewDelegate{
         
         setupBase()
         sceneView.scene = scene
+        
+        
     }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
@@ -1137,7 +1334,24 @@ extension ViewController: BluetoothSerialDelegate{
     
     // Called when a message is received
     func serialDidReceiveString(_ message: String) {
-        // add the received text to the textView, optionally with a line break at the end
+        
+        //show the Instruction
+        
+        let alert2 = UIAlertController(title: "The occupancy of the train was saved.", message: "Please choose a scene which sets up the people on the platform \n Scene 1: There are only few people on the platform. \n Scene 2: There are some people on the platform. \n Scene 3: There are many people on the platform. \n Scene 4: The platform is loaded.", preferredStyle: UIAlertControllerStyle.alert)
+        let scene1 = UIAlertAction(title: "Scene 1 - Few", style: .default, handler: { (alertAction: UIAlertAction)in self.scene1Action()   })
+        let scene2 = UIAlertAction(title: "Scene 2 - Some", style: .default, handler: { (alertAction: UIAlertAction)in self.scene2Action()     })
+        let scene3 = UIAlertAction(title: "Scene 3 - Many", style: .default, handler: { (alertAction: UIAlertAction)in self.scene3Action()     })
+        let scene4 = UIAlertAction(title: "Scene 4 - Loaded", style: .default, handler: { (alertAction: UIAlertAction)in self.scene4Action()     })
+        
+        alert2.addAction(scene1)
+        alert2.addAction(scene2)
+        alert2.addAction(scene3)
+        alert2.addAction(scene4)
+        
+        // show the alert
+        
+        self.present(alert2, animated: true, completion: nil)
+        
     }
     /*
      //Not implemented:

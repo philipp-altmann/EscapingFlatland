@@ -22,7 +22,8 @@ class Wagon: SCNNode {
         self.delegate = delegate
         self.wagonNo = i
         super.init()
-        let subwayGeometry = (SCNScene(named: "art.scnassets/subway.scn")!).rootNode.childNode(withName: "train", recursively: false)!.geometry!
+       let subwayGeometry = (SCNScene(named: "art.scnassets/model2_1wagons_centered.scn")!).rootNode.childNode(withName: "train", recursively: false)!.geometry!
+      //  let subwayGeometry = (SCNScene(named: "art.scnassets/subway.scn")!).rootNode.childNode(withName: "train", recursively: false)!.geometry!
         let subwayMaterial = SCNMaterial()
         //subwayMaterial.diffuse.contents = UIColor.init(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
         subwayMaterial.diffuse.contents = UIColor.lightGray

@@ -282,6 +282,8 @@ final class BluetoothSerial: NSObject, CBCentralManagerDelegate, CBPeripheralDel
             delegate.serialDidReceiveString(str)
             print(str)
             sig = str
+            
+            
         } else {
             //print("Received an invalid string!") uncomment for debugging
         }
