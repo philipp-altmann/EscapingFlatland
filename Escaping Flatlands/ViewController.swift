@@ -243,19 +243,13 @@ class ViewController: UIViewController {
         let pds:CGFloat = CGFloat(c.scale/10)
         
         //vorne
-
-        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-4*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ+10*pds))
         
         //mitte
-        
-        
         addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-53*pds))
-        
-        
-        
-        
+    
         //hinten
-        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-100*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-150*pds))
     
     
         
@@ -434,13 +428,13 @@ class ViewController: UIViewController {
         
         //mitte
         
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-50*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-60*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-90*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-110*pds))
         
         //vorne
-        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-130*pds))
-        addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-120*pds))
-        
+        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-230*pds))
+        addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-210*pds))
+        addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-190*pds))
         
 
         
@@ -573,7 +567,7 @@ class ViewController: UIViewController {
         pedestrians[3].runAction(SCNAction.sequence([wait1,targetDoor1, wait2, moveInDoor, fadeOut]))
         pedestrians[4].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
         pedestrians[5].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
-        
+        pedestrians[6].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
         
     }
     
@@ -629,15 +623,14 @@ class ViewController: UIViewController {
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+15*pds))
         
         //mitte
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-30*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-50*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-90*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-100*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-120*pds))
         
         //vorne
-        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-130*pds))
-        
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-110*pds))
-        
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-125*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ-230*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-210*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-190*pds))
         
         
         
@@ -767,6 +760,7 @@ class ViewController: UIViewController {
         pedestrians[6].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
         pedestrians[7].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
         pedestrians[8].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+         pedestrians[9].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
     }
     
     
@@ -818,6 +812,7 @@ class ViewController: UIViewController {
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+50*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+60*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+80*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+80*pds))
        
         
         //mitte
@@ -825,14 +820,14 @@ class ViewController: UIViewController {
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-120*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-150*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-160*pds))
-        
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-180*pds))
         
         //vorne
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-190*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-200*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-210*pds))
         addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-220*pds))
-        
+        addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-240*pds))
         
         
         let middleDoorZ = -c.size.l/4 * 2
