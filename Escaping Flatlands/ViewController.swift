@@ -33,6 +33,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var bluetoothLabel: UILabel!
     @IBOutlet weak var bluetoothButton: UIButton!
     
+    var needsToRotate = true
+    
     
     
     
@@ -69,6 +71,19 @@ class ViewController: UIViewController {
     let wait1 = SCNAction.wait(duration: 1)
     let fadeOut = SCNAction.fadeOut(duration: 1)
     
+    //Station & Train animation consts
+    let pds:CGFloat = CGFloat(Constants().scale/10)
+    let frontDoorZ = Float(-Constants().size.l/4 * 3.35)// + Constants().dfo.z
+    let middleDoorZ = Float(-Constants().size.l/4 * 2)// + Constants().dfo.z
+    let backDoorZ = Float(-Constants().size.l/4 * 0.64)// + Constants().dfo.z
+    let doorDistanceX = Float(-Constants().size.w + CGFloat(Constants().scale/2))
+    
+    
+    let moveToFrontDoor = SCNAction.move(to: SCNVector3(Float(-Constants().size.w + CGFloat(Constants().scale/2)), 0.0 /*Constants().dfo.y*/, Float(-Constants().size.l/4 * 3.35) /*+ Constants().dfo.z)*/, duration: 6)
+    let moveToMiddleDoor = SCNAction.move(to: SCNVector3(Float(-Constants().size.w + CGFloat(Constants().scale/2)), 0.0 /*Constants().dfo.y*/, Float(-Constants().size.l/4 * 2) + Constants().dfo.z), duration: 8)
+    let moveToBackDoor = SCNAction.move(to: SCNVector3(Float(-Constants().size.w + CGFloat(Constants().scale/2)), Constants().dfo.y, Float(-Constants().size.l/4 * 0.64) + Constants().dfo.z), duration: 8)
+    let moveInDoor = SCNAction.move(by: SCNVector3(-Constants().scale, 0, 0), duration: 2)
+    
     
     
     override func viewDidLoad() {
@@ -99,7 +114,7 @@ class ViewController: UIViewController {
         floorMaterial.diffuse.contents = UIColor.init(red: 0.2, green: 0.2, blue: 0.2, alpha: 0.4)
         floorGeometry.materials = [floorMaterial]
         let floor = SCNNode(geometry: floorGeometry)
-        floor.position = SCNVector3(-c.size.w/2,-c.size.h/2,-c.size.l/2)
+        floor.position = SCNVector3(Float(-c.size.w/2)+c.dfo.x,Float(-c.size.h/2)+c.dfo.y,Float(-c.size.l/2)+c.dfo.z)
         scene.rootNode.addChildNode(floor)
     }
     
@@ -114,7 +129,7 @@ class ViewController: UIViewController {
         let pedestrian = SCNNode(geometry: pedestrianGeometry)
         pedestrian.runAction(SCNAction.rotateBy(x: -.pi / 2, y: 0, z: 0, duration: 0))
         pedestrian.scale = SCNVector3(c.scale,c.scale,c.scale)
-        pedestrian.position = position
+        pedestrian.position = SCNVector3(x: position.x+c.dfo.x, y: position.y+c.dfo.y, z: position.z+c.dfo.z)//position
         
         pedestrians.append(pedestrian)
         pedestrian.runAction(SCNAction.fadeOut(duration: 0))
@@ -123,49 +138,16 @@ class ViewController: UIViewController {
     }
     
     
-    
-    /*func addSubway() {
-        let subwayGeometry = (SCNScene(named: "art.scnassets/subway.scn")!).rootNode.childNode(withName: "train", recursively: false)!.geometry!
-        let subwayMaterial = SCNMaterial()
-        subwayMaterial.diffuse.contents = UIColor.init(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
-        subwayGeometry.materials = [subwayMaterial]
-        subway = SCNNode()
-        for i in 0..<3 {
-            let train = SCNNode(geometry: subwayGeometry)
-            train.runAction(SCNAction.rotateBy(x: -.pi / 2, y: .pi/2, z: 0, duration: 0))
-            train.scale = SCNVector3(scale,scale,scale)
-            let z:CGFloat = CGFloat(i) * size.l/3 //train.boundingBox.min.x
-            train.position = SCNVector3(0, 0, -z)
-            subway.addChildNode(train)
-        }
-        /*subway = SCNNode(geometry: subwayGeometry)
-        subway.runAction(SCNAction.rotateBy(x: -.pi / 2, y: .pi/2, z: 0, duration: 0))
-        subway.scale = SCNVector3(0.025,0.025,0.025)//SCNVector3(0.1,0.1,0.1)
-        subway.position = SCNVector3(-size.w - 0.005, 0, 5)
-        let xShift = subway.boundingBox.max.x
-        subway.addChildNode(<#T##child: SCNNode##SCNNode#>)*/
-        
-        subway.position = SCNVector3(-size.w - 0.005, 0, 5)
-        scene.rootNode.addChildNode(subway)
-    }*/
-    
-    
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
         
-        
-        
-        
         configuration.worldAlignment = .gravity//.camera//.gravityAndHeading//.gravity //.camera
 
         // Run the view's session
         sceneView.session.run(configuration)
-        
-    
         
     }
     
@@ -187,8 +169,16 @@ class ViewController: UIViewController {
     @IBAction func reloadAR(_ sender: Any) {
         let configuration = ARWorldTrackingConfiguration()
         //configuration.worldAlignment = .gravity
+        needsToRotate = true
         self.sceneView.session.run(configuration, options: [ARSession.RunOptions.removeExistingAnchors, ARSession.RunOptions.resetTracking])
+        
+        //self.sceneVi
+        
+       
+        //self.sceneView.
     }
+    
+    
     
     
     //erste Szene: alle Mittig
@@ -244,7 +234,6 @@ class ViewController: UIViewController {
     
         let groupCenterX = -c.size.w/3
         let groupCenterZ = -c.size.l/5
-        let pds:CGFloat = CGFloat(c.scale/10)
         
         //vorne
         addPedestrian(at: SCNVector3(groupCenterX-4*pds,0,groupCenterZ+10*pds))
@@ -254,24 +243,6 @@ class ViewController: UIViewController {
     
         //hinten
         addPedestrian(at: SCNVector3(groupCenterX-2*pds,0,groupCenterZ-150*pds))
-    
-    
-        
-        let wait2 = SCNAction.wait(duration: 2)
-        let wait1 = SCNAction.wait(duration: 1)
-        let fadeOut = SCNAction.fadeOut(duration: 1)
-        
-    
-        let frontDoorZ = -c.size.l/4 * 3.35
-        let middleDoorZ = -c.size.l/4 * 2
-        let backDoorZ = -c.size.l/4 * 0.64
-        let doorDistanceX = -c.size.w + 5*pds
-        
-        
-        let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
-        let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)
-        let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
-        let moveInDoor = SCNAction.move(by: SCNVector3(-c.scale, 0, 0), duration: 2)
         
         
         var firstDigit = Int(serial.sig[serial.sig.startIndex..<serial.sig.index(serial.sig.endIndex, offsetBy: -2)])
@@ -442,7 +413,7 @@ class ViewController: UIViewController {
         
 
         
-        let frontDoorZ = -c.size.l/4 * 3.35
+        /*let frontDoorZ = -c.size.l/4 * 3.35
         let middleDoorZ = -c.size.l/4 * 2
         let backDoorZ = -c.size.l/4 * 0.64
         let doorDistanceX = -c.size.w + 5*pds
@@ -459,7 +430,7 @@ class ViewController: UIViewController {
         
         let wait2 = SCNAction.wait(duration: 2)
         let wait1 = SCNAction.wait(duration: 1)
-        let fadeOut = SCNAction.fadeOut(duration: 1)
+        let fadeOut = SCNAction.fadeOut(duration: 1)*/
         
         
         
@@ -641,7 +612,7 @@ class ViewController: UIViewController {
         
         
         
-        let middleDoorZ = -c.size.l/4 * 2
+        /*let middleDoorZ = -c.size.l/4 * 2
         let frontDoorZ = -c.size.l/4 * 3.35
         let backDoorZ = -c.size.l/4 * 0.64
         let doorDistanceX = -c.size.w + 5*pds
@@ -649,7 +620,7 @@ class ViewController: UIViewController {
         let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
         let moveInDoor = SCNAction.move(by: SCNVector3(-c.scale, 0, 0), duration: 2)
         let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
-        let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)
+        let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)*/
         
         
         
@@ -838,7 +809,7 @@ class ViewController: UIViewController {
         addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-240*pds))
         
         
-        let middleDoorZ = -c.size.l/4 * 2
+        /*let middleDoorZ = -c.size.l/4 * 2
         let frontDoorZ = -c.size.l/4 * 3.35
         let backDoorZ = -c.size.l/4 * 0.64
         let doorDistanceX = -c.size.w + 5*pds
@@ -846,7 +817,7 @@ class ViewController: UIViewController {
         let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
         let moveInDoor = SCNAction.move(by: SCNVector3(-c.scale, 0, 0), duration: 2)
         let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
-        let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)
+        let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)*/
         
         var firstDigit = Int(serial.sig[serial.sig.startIndex..<serial.sig.index(serial.sig.endIndex, offsetBy: -2)])
         var secondDigit = Int(serial.sig[serial.sig.index(serial.sig.startIndex,offsetBy:1)..<serial.sig.index(serial.sig.endIndex, offsetBy: -1)])
@@ -1018,7 +989,7 @@ class ViewController: UIViewController {
         //vorne
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-115*pds))
         
-        let middleDoorZ = -c.size.l/4 * 2
+        /*let middleDoorZ = -c.size.l/4 * 2
         let frontDoorZ = -c.size.l/4 * 3.35
         let backDoorZ = -c.size.l/4 * 0.64
         let doorDistanceX = -c.size.w + 5*pds
@@ -1026,7 +997,7 @@ class ViewController: UIViewController {
         let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
         let moveToMiddleDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, middleDoorZ), duration: 8)
         let moveInDoor = SCNAction.move(by: SCNVector3(-c.scale, 0, 0), duration: 2)
-       let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)
+       let moveToBackDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, backDoorZ), duration: 8)*/
         
         
         var firstDigit = Int(serial.sig[serial.sig.startIndex..<serial.sig.index(serial.sig.endIndex, offsetBy: -2)])
@@ -1149,7 +1120,7 @@ class ViewController: UIViewController {
     }
     
     // choosing the doors from the nuber of people inside
-    func chooseDoor(){
+    /*func chooseDoor(){
         
         let pds:CGFloat = CGFloat(c.scale/10)
         let frontDoorZ = -c.size.l/4 * 3.35
@@ -1250,7 +1221,7 @@ class ViewController: UIViewController {
         print(finalFirstDigit + finalSecondDigit + finalThirdDigit)
         serial.sendMessageToDevice(finalFirstDigit + finalSecondDigit + finalThirdDigit)
         
-    }
+    }*/
     
 
     
@@ -1323,6 +1294,30 @@ extension ViewController: ARSCNViewDelegate{
         
     }
     
+    func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
+        print("Tracking Status changed")
+        if needsToRotate {
+            print("Rotating")
+            let r = CATransform3DMakeRotation(90, 0, 1, 0)
+            SCNMatrix4MakeRotation(45, 0, 1, 0)
+            let dfo = SCNVector3(x: 0, y: -0.65, z: -0.1)
+            
+            SCNMatrix4MakeTranslation(0, -0,65, -0.1)
+            
+            let origin = SCNMatrix4.init(m11: Float(r.m11), m12: Float(r.m12), m13: Float(r.m13), m14: Float(r.m14), m21: Float(r.m21), m22: Float(r.m22), m23: Float(r.m23), m24: Float(r.m24), m31: Float(r.m31), m32: Float(r.m32), m33: Float(r.m33), m34: Float(r.m34), m41: Float(r.m41), m42: Float(r.m42), m43: Float(r.m43), m44: Float(r.m44))
+            self.sceneView.session.setWorldOrigin(relativeTransform: simd_float4x4(origin))
+            needsToRotate = false
+        }
+        
+        //print(camera.)
+    }
+    
+    
+    /*func renderer(_ renderer: SCNSceneRenderer, didRenderScene scene: SCNScene, atTime time: TimeInterval) {
+        print("Did render")
+        print(scene)
+    }*/
+    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
     }
@@ -1367,6 +1362,11 @@ extension ViewController: BluetoothSerialDelegate{
         bluetoothLabel.text = "Disconnected"
         bluetoothButton.setTitle("Connect", for: .normal)
         bluetoothButton.tintColor = .white
+    }
+    
+    @IBAction func testReceive(_ sender: Any?){
+        serial.sig = "101"
+        self.serialDidReceiveString("111")
     }
     
     // Called when a message is received

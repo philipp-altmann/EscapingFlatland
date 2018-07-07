@@ -32,9 +32,6 @@ class Pedestrian: SCNNode {
         pedestrian.scale = SCNVector3(0.025,0.025,0.025)
         pedestrian.position = position
         //pedestrian.isHidden = true
-       
-        
-        
     }
     
     func moveTo(_ subway:Subway, within: TimeInterval, after: TimeInterval, delay: TimeInterval) {

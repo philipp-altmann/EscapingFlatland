@@ -30,7 +30,7 @@ class Subway: SCNNode {
             wagons.append(wagon)
             self.addChildNode(wagon)
         }
-        self.position = SCNVector3(-c.size.w - 0.005, 0, 5)
+        self.position = SCNVector3(Float(-c.size.w - 0.005) + c.dfo.x, c.dfo.y, 5+c.dfo.z)
         
     }
     

@@ -15,6 +15,7 @@ class Constants{
     let scale = 0.025
     let size:(w:CGFloat, h:CGFloat, l:CGFloat) = (0.14, 0.01, 0.96)//(0.3, 0.025, 0.75) (0.11, 0.01, 0.568)
     let doorDistance:CGFloat = -0.11 + 5*0.025/10
+    let dfo = SCNVector3(x: 0, y: -0.65, z: -0.1)
     
     
 }
