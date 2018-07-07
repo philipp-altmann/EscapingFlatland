@@ -156,6 +156,10 @@ class ViewController: UIViewController {
         
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
+        
+        
+        
+        
         configuration.worldAlignment = .gravity//.camera//.gravityAndHeading//.gravity //.camera
 
         // Run the view's session
@@ -258,9 +262,9 @@ class ViewController: UIViewController {
         let fadeOut = SCNAction.fadeOut(duration: 1)
         
     
-        let frontDoorZ = -c.size.l/4 * 3
+        let frontDoorZ = -c.size.l/4 * 3.35
         let middleDoorZ = -c.size.l/4 * 2
-        let backDoorZ = -c.size.l/4 * 1
+        let backDoorZ = -c.size.l/4 * 0.64
         let doorDistanceX = -c.size.w + 5*pds
         
         
@@ -438,9 +442,9 @@ class ViewController: UIViewController {
         
 
         
-        let frontDoorZ = -c.size.l/4 * 3
+        let frontDoorZ = -c.size.l/4 * 3.35
         let middleDoorZ = -c.size.l/4 * 2
-        let backDoorZ = -c.size.l/4 * 1
+        let backDoorZ = -c.size.l/4 * 0.64
         let doorDistanceX = -c.size.w + 5*pds
         
         
@@ -635,8 +639,8 @@ class ViewController: UIViewController {
         
         
         let middleDoorZ = -c.size.l/4 * 2
-        let frontDoorZ = -c.size.l/4 * 3
-        let backDoorZ = -c.size.l/4 * 1
+        let frontDoorZ = -c.size.l/4 * 3.35
+        let backDoorZ = -c.size.l/4 * 0.64
         let doorDistanceX = -c.size.w + 5*pds
         
         let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
@@ -808,31 +812,33 @@ class ViewController: UIViewController {
         let pds:CGFloat = CGFloat(c.scale/10)
         
         //hinten
+        
+        
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+20*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+50*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+60*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+80*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+80*pds))
-       
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+0*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-10*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-40*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-60*pds))
+        
         
         //mitte
-         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-100*pds))
+         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-80*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-100*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-120*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-130*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-150*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-160*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-180*pds))
         
         //vorne
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-180*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-190*pds))
-        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-200*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-210*pds))
         addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-220*pds))
         addPedestrian(at: SCNVector3(groupCenterX+3*pds,0,groupCenterZ-240*pds))
         
         
         let middleDoorZ = -c.size.l/4 * 2
-        let frontDoorZ = -c.size.l/4 * 3
-        let backDoorZ = -c.size.l/4 * 1
+        let frontDoorZ = -c.size.l/4 * 3.35
+        let backDoorZ = -c.size.l/4 * 0.64
         let doorDistanceX = -c.size.w + 5*pds
         
         let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
@@ -951,12 +957,14 @@ class ViewController: UIViewController {
         pedestrians[4].runAction(SCNAction.sequence([targetDoor2,wait1, moveInDoor, fadeOut]))
         pedestrians[5].runAction(SCNAction.sequence([wait1 ,targetDoor2, wait2, moveInDoor, fadeOut]))
         pedestrians[6].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor2, moveInDoor, fadeOut]))
-        pedestrians[7].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        pedestrians[7].runAction(SCNAction.sequence([wait1, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
          pedestrians[8].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
          pedestrians[9].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
          pedestrians[10].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
          pedestrians[11].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
-       
+       pedestrians[12].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        pedestrians[13].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        pedestrians[14].runAction(SCNAction.sequence([wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
         
         
     }
@@ -1000,8 +1008,8 @@ class ViewController: UIViewController {
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-115*pds))
         
         let middleDoorZ = -c.size.l/4 * 2
-        let frontDoorZ = -c.size.l/4 * 3
-        let backDoorZ = -c.size.l/4 * 1
+        let frontDoorZ = -c.size.l/4 * 3.35
+        let backDoorZ = -c.size.l/4 * 0.64
         let doorDistanceX = -c.size.w + 5*pds
         
         let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
@@ -1133,9 +1141,9 @@ class ViewController: UIViewController {
     func chooseDoor(){
         
         let pds:CGFloat = CGFloat(c.scale/10)
-        let frontDoorZ = -c.size.l/4 * 3
+        let frontDoorZ = -c.size.l/4 * 3.35
         let middleDoorZ = -c.size.l/4 * 2
-        let backDoorZ = -c.size.l/4 * 1
+        let backDoorZ = -c.size.l/4 * 0.64
         let doorDistanceX = -c.size.w + 5*pds
         
         let moveToFrontDoor = SCNAction.move(to: SCNVector3(doorDistanceX, 0, frontDoorZ), duration: 6)
@@ -1320,6 +1328,9 @@ extension ViewController: ARSCNViewDelegate{
      let node = SCNNode()
      return node
      }*/
+    
+    
+    
 }
 
 extension ViewController: BluetoothSerialDelegate{
@@ -1352,7 +1363,7 @@ extension ViewController: BluetoothSerialDelegate{
         
         //show the Instruction
         
-        let alert2 = UIAlertController(title: "The occupancy of the train was saved.", message: "Please choose a scene which sets up the people on the platform \n Scene 1: There are only few people on the platform. \n Scene 2: There are some people on the platform. \n Scene 3: There are many people on the platform. \n Scene 4: The platform is loaded.", preferredStyle: UIAlertControllerStyle.alert)
+        let alert2 = UIAlertController(title: "The occupancy of the train was saved.", message: "Please choose a scene which sets up the people on the platform.", preferredStyle: UIAlertControllerStyle.alert)
         let scene1 = UIAlertAction(title: "Scene 1 - Few", style: .default, handler: { (alertAction: UIAlertAction)in self.scene1Action()   })
         let scene2 = UIAlertAction(title: "Scene 2 - Some", style: .default, handler: { (alertAction: UIAlertAction)in self.scene2Action()     })
         let scene3 = UIAlertAction(title: "Scene 3 - Many", style: .default, handler: { (alertAction: UIAlertAction)in self.scene3Action()     })
