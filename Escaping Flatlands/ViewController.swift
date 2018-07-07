@@ -287,14 +287,14 @@ class ViewController: UIViewController {
                 //erste Ziffer ist kleinste bzw hinten am leersten
                 targetDoor1 = moveToBackDoor
                 targetDoor2 = moveToBackDoor
-                firstDigit = firstDigit! + 2
+                firstDigit = firstDigit! + 1
                 print("hinten leer")
             }else if thirdDigit!<firstDigit!{
                 //letzte ist kleinste
                 targetDoor1 = moveToFrontDoor
                 targetDoor2 = moveToFrontDoor
                 print("vorne leer")
-                thirdDigit = thirdDigit! + 2
+                thirdDigit = thirdDigit! + 1
             }
             else{
                 //erste und letzte kleiner als mitte
@@ -302,7 +302,7 @@ class ViewController: UIViewController {
                 targetDoor2 = moveToBackDoor
                 print("hinten und vorne beide leer")
                 firstDigit = firstDigit! + 1
-                thirdDigit = thirdDigit! + 1
+                thirdDigit = thirdDigit!
             }
             
         }else if (firstDigit!==secondDigit!)&&(firstDigit!<thirdDigit!){
@@ -311,13 +311,13 @@ class ViewController: UIViewController {
             targetDoor2 = moveToBackDoor
             print("Hinten und Mitte beide leer")
             firstDigit = firstDigit!+1
-            secondDigit = secondDigit!+1
+            secondDigit = secondDigit!
         }else if (thirdDigit!==secondDigit!)&&(thirdDigit!<firstDigit!){
             //Letzte und Mitte kleiner als erste
             targetDoor1 = moveToFrontDoor
             targetDoor2 = moveToMiddleDoor
             print("Vorne und Mitte beide leer")
-            thirdDigit = thirdDigit!+1
+            thirdDigit = thirdDigit!
             secondDigit = secondDigit!+1
         }
         else if secondDigit!<thirdDigit!{
@@ -325,20 +325,20 @@ class ViewController: UIViewController {
             targetDoor1 = moveToMiddleDoor
             targetDoor2 = moveToMiddleDoor
             print("mitte leer")
-            secondDigit = secondDigit!+2
+            secondDigit = secondDigit!+1
         }else if thirdDigit!<secondDigit!{
             //lezte ist kleinste
             targetDoor1 = moveToFrontDoor
             targetDoor2 = moveToFrontDoor
             print("vorne leer")
-            thirdDigit = thirdDigit! + 2
+            thirdDigit = thirdDigit! + 1
         }else{
             //alle sind gleichgroß
             targetDoor1 = moveToFrontDoor
             targetDoor2 = moveToBackDoor
             print("alle gleich")
             firstDigit = firstDigit! + 1
-            thirdDigit = thirdDigit! + 1
+            thirdDigit = thirdDigit!
         }
         
         // define and send values
@@ -962,19 +962,19 @@ class ViewController: UIViewController {
         
         
         pedestrians[0].runAction(SCNAction.sequence([targetDoor2, wait1, moveInDoor, fadeOut]))
-        pedestrians[1].runAction(SCNAction.sequence([wait2, targetDoor2, wait2, moveInDoor, fadeOut]))
+        pedestrians[1].runAction(SCNAction.sequence([wait2, moveToBackDoor, wait2, moveInDoor, fadeOut]))
         pedestrians[2].runAction(SCNAction.sequence([targetDoor2,wait1, moveInDoor, fadeOut]))
         pedestrians[3].runAction(SCNAction.sequence([targetDoor2,wait2, moveInDoor, fadeOut]))
         pedestrians[4].runAction(SCNAction.sequence([targetDoor12,wait1, moveInDoor, fadeOut]))
         pedestrians[5].runAction(SCNAction.sequence([wait1 ,targetDoor12, wait2, moveInDoor, fadeOut]))
-        pedestrians[6].runAction(SCNAction.sequence([wait2,targetDoor12, wait1, moveInDoor, fadeOut]))
+        pedestrians[6].runAction(SCNAction.sequence([wait2,moveToMiddleDoor, wait1, moveInDoor, fadeOut]))
         pedestrians[7].runAction(SCNAction.sequence([ wait2, targetDoor1, wait1, moveInDoor, fadeOut]))
          pedestrians[8].runAction(SCNAction.sequence([wait2, wait1, targetDoor1, moveInDoor, fadeOut]))
          pedestrians[9].runAction(SCNAction.sequence([ wait2, targetDoor1,wait1, moveInDoor, fadeOut]))
-         pedestrians[10].runAction(SCNAction.sequence([ wait2, targetDoor1, moveInDoor, fadeOut]))
+         pedestrians[10].runAction(SCNAction.sequence([ wait2, wait2, moveToFrontDoor, moveInDoor, fadeOut]))
          pedestrians[11].runAction(SCNAction.sequence([  targetDoor1, wait1, moveInDoor, fadeOut]))
        pedestrians[12].runAction(SCNAction.sequence([targetDoor1, wait2, moveInDoor, fadeOut]))
-        pedestrians[13].runAction(SCNAction.sequence([wait1, targetDoor1, wait1, moveInDoor, fadeOut]))
+        pedestrians[13].runAction(SCNAction.sequence([wait1, wait2, moveToFrontDoor, wait1, moveInDoor, fadeOut]))
         pedestrians[14].runAction(SCNAction.sequence([targetDoor1,wait2, moveInDoor, fadeOut]))
         
         
