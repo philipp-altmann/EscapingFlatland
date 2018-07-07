@@ -625,8 +625,12 @@ class ViewController: UIViewController {
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+30*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+40*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ+15*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-10*pds))
         
         //mitte
+        
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-50*pds))
+        addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-70*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-90*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-100*pds))
         addPedestrian(at: SCNVector3(groupCenterX-1*pds,0,groupCenterZ-120*pds))
@@ -760,11 +764,14 @@ class ViewController: UIViewController {
         pedestrians[2].runAction(SCNAction.sequence([targetDoor2,wait1, moveInDoor, fadeOut]))
         pedestrians[3].runAction(SCNAction.sequence([wait1 ,targetDoor2, wait2, moveInDoor, fadeOut]))
         pedestrians[4].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor2, moveInDoor, fadeOut]))
-        pedestrians[5].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        pedestrians[5].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor2, moveInDoor, fadeOut]))
         pedestrians[6].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
         pedestrians[7].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
         pedestrians[8].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
          pedestrians[9].runAction(SCNAction.sequence([wait2, wait2, wait2, targetDoor1, moveInDoor, fadeOut]))
+        pedestrians[10].runAction(SCNAction.sequence([targetDoor1, wait1, moveInDoor, fadeOut]))
+        pedestrians[11].runAction(SCNAction.sequence([targetDoor1, wait1, moveInDoor, fadeOut]))
+        pedestrians[12].runAction(SCNAction.sequence([targetDoor1, wait1, moveInDoor, fadeOut]))
     }
     
     
