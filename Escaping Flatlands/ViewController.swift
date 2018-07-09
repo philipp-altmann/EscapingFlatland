@@ -33,7 +33,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var bluetoothLabel: UILabel!
     @IBOutlet weak var bluetoothButton: UIButton!
     
-    
+    var needsToRotate = true
     
     
 //    @IBAction func PopUp(_ sender: Any) {
@@ -187,6 +187,7 @@ class ViewController: UIViewController {
     @IBAction func reloadAR(_ sender: Any) {
         let configuration = ARWorldTrackingConfiguration()
         //configuration.worldAlignment = .gravity
+        needsToRotate = true
         self.sceneView.session.run(configuration, options: [ARSession.RunOptions.removeExistingAnchors, ARSession.RunOptions.resetTracking])
     }
     
@@ -1323,6 +1324,32 @@ extension ViewController: ARSCNViewDelegate{
         
     }
     
+    func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
+        print("Tracking Status changed")
+        if needsToRotate {
+            print("Rotating")
+            //let r = CATransform3DMakeRotation(90, 0, 1, 0)
+            //let transformation = SCNMatrix4
+            //transformation.rotate
+            //SCNMatrix4MakeRotation(90, 0, 1, 0)
+            
+            self.sceneView.session.setWorldOrigin(relativeTransform: simd_float4x4(SCNMatrix4Translate(SCNMatrix4MakeRotation(-45, 0, 1, 0), -0.35, -0.65, -0.4)))
+            //self.sceneView.session.setWorldOrigin(relativeTransform: simd_float4x4(SCNMatrix4MakeRotation(90, 0, 1, 0)))
+            //self.sceneView.session.setWorldOrigin(relativeTransform: simd_float4x4(SCNMatrix4MakeTranslation(0, -0.64, -0.1)))
+            
+            //let dfo = SCNVector3(x: 0, y: -0.65, z: -0.1)
+            
+            //SCNMatrix4MakeTranslation(0, -0,65, -0.1)
+            
+            /*let origin = SCNMatrix4.init(m11: Float(r.m11), m12: Float(r.m12), m13: Float(r.m13), m14: Float(r.m14), m21: Float(r.m21), m22: Float(r.m22), m23: Float(r.m23), m24: Float(r.m24), m31: Float(r.m31), m32: Float(r.m32), m33: Float(r.m33), m34: Float(r.m34), m41: Float(r.m41), m42: Float(r.m42), m43: Float(r.m43), m44: Float(r.m44))
+            self.sceneView.session.setWorldOrigin(relativeTransform: simd_float4x4(origin))*/
+            needsToRotate = false
+        }
+        
+        //print(camera.)
+    }
+    
+    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
     }
@@ -1389,6 +1416,11 @@ extension ViewController: BluetoothSerialDelegate{
         
         self.present(alert2, animated: true, completion: nil)
         
+    }
+    
+    @IBAction func testRun(_ sender: Any?){
+        serial.sig = "202"
+        self.scene4Action()
     }
     /*
      //Not implemented:
